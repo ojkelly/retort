@@ -16,7 +16,8 @@ type (
 )
 
 // TODO: direct hover and click events
-// TODO: keep track of focussed inputs, and direct keyboard input there, when focussed
+// TODO: keep track of focussed inputs, and direct keyboard input there, when
+// focussed
 func (r *retort) handleEvents() {
 	screen := UseScreen()
 	quit := UseQuit()

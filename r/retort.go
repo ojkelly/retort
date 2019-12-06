@@ -244,7 +244,7 @@ func (r *retort) ForceRender() {
 	r.updateTree()
 }
 
-// [ Working ]--------------------------------------------------------------------------------------
+// [ Working ]------------------------------------------------------------------
 
 func (r *retort) updateTree() {
 	r.wipRoot = r.currentRoot
@@ -280,7 +280,7 @@ func (r *retort) performWork(f *fiber) *fiber {
 var hookFiber *fiber
 var hookFiberLock = &sync.Mutex{}
 
-// [ Components ]-----------------------------------------------------------------------------------
+// [ Components ]---------------------------------------------------------------
 
 func (r *retort) updateComponent(f *fiber) {
 	hookFiberLock.Lock()
@@ -369,7 +369,7 @@ func (r *retort) updateScreenComponent(f *fiber) {
 
 }
 
-// [ Children ]-------------------------------------------------------------------------------------
+// [ Children ]-----------------------------------------------------------------
 
 func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 	index := 0

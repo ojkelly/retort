@@ -51,8 +51,8 @@ func (r *retort) commitWork(f *fiber) {
 	case fiberEffectNothing:
 	case fiberEffectPlacement:
 		// debug.Spew("fiberEffectPlacement", f)
-		// TODO: extract all renderToScreen's and execute them in ZIndex order lowest to highest
-		// this should allow layered things
+		// TODO: extract all renderToScreen's and execute them in ZIndex order
+		// lowest to highest this should allow layered things
 		// for _, el := range f.elements {
 		if f.renderToScreen == nil {
 			break
@@ -63,7 +63,8 @@ func (r *retort) commitWork(f *fiber) {
 		// }
 
 		// need to keep track of previous location of this element
-		// so when it's called we can clear the screen it used to be in before redrawing
+		// so when it's called we can clear the screen it used to be in before
+		// redrawing
 		render := *f.renderToScreen
 		f.boxLayout = render(screen)
 		// }
@@ -79,7 +80,8 @@ func (r *retort) commitWork(f *fiber) {
 		}
 
 		// need to keep track of previous location of this element
-		// so when it's called we can clear the screen it used to be in before redrawing
+		// so when it's called we can clear the screen it used to be in before
+		// redrawing
 		render := *f.renderToScreen
 		f.boxLayout = render(screen)
 		// }

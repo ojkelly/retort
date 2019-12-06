@@ -28,27 +28,30 @@ type (
 	// on to the return Element.
 	Children []*fiber
 
-	// Properties are immutable state that is passed into a component, and pass down to components to
-	// share data.
+	// Properties are immutable state that is passed into a component, and pass
+	// down to components to share data.
 	//
-	// Properties is ultimately a slice of interfaces, which lets you and retort and any components your
-	// using add any concrete structs to it. Because of this, there are some helper methods to retrieve
-	// props. These are GetProperty and GetOptionalProperty.
+	// Properties is ultimately a slice of interfaces, which lets you and retort
+	// and any components your using add any concrete structs to it. Because of
+	// this, there are some helper methods to retrieve props. These are
+	// GetProperty and GetOptionalProperty.
 	//
-	// Properties can only contain one struct of a given type. In this sense the type of the struct
-	// is a key.
+	// Properties can only contain one struct of a given type. In this sense the
+	// type of the struct is a key.
 	//
 	// Sometimes called props.
 	Properties []interface{}
 
 	// State is local to a component.
-	// it is mutable via the setState function from UseState.
+	// It is mutable via the setState function from UseState. Don't edit State
+	// directly, as retort will not know that you have, and will not trigger an
+	// update and re-render.
 	// It can be used to create new props to pass down to other components.
 	State []interface{}
 )
 
-// CreateElement is used to create the building blocks of a retort application, and the thing
-// that Components are ultimately made up of, Elements.
+// CreateElement is used to create the building blocks of a retort application,
+// and the thing that Components are ultimately made up of, Elements.
 //
 //  import (
 //    "github.com/gdamore/tcell"
@@ -80,10 +83,14 @@ type (
 //    )
 //  }
 //
-// By creating an Element and passing Properties and Children seperately, retort can keep track of
-// the entire tree of Components, and decide when to compute which parts, and in turn when to render
-// those to the screen.
-func CreateElement(component Component, props Properties, children Children) *fiber {
+// By creating an Element and passing Properties and Children seperately, retort
+// can keep track of the entire tree of Components, and decide when to compute
+// which parts, and in turn when to render those to the screen.
+func CreateElement(
+	component Component,
+	props Properties,
+	children Children,
+) *fiber {
 	// debug.Spew("CreateElement", component, props, children)
 	if !checkPropTypesAreUnique(props) {
 		panic("props are not unique")
@@ -155,25 +162,17 @@ func checkPropTypesAreUnique(props Properties) bool {
 	return true
 }
 
-func filterNilFromProperties(props Properties) (filteredProps Properties) {
-	for _, p := range props {
-		if p != nil {
-			filteredProps = append(filteredProps, p)
-		}
-	}
-	return filteredProps
-}
-
-// GetProperty will search props for the Property matching the type of the struct you passed in,
-// and will throw an Error with the message provided if not found.
+// GetProperty will search props for the Property matching the type of the
+// struct you passed in, and will throw an Error with the message provided
+// if not found.
 //
-// This is useful when your component will not work without the provided Property. However it is
-// very unforgiving, and generally you will want to use GetOptionalProperty which allows you
-// to provide a default Property to use.
+// This is useful when your component will not work without the provided
+// Property. However it is very unforgiving, and generally you will want to use
+// GetOptionalProperty which allows you to provide a default Property to use.
 //
-// Because this uses reflection, you must pass in a concrete struct not just the type. For example
-// r.Children is the type but r.Children{} is a struct of that type. Only the latter will
-// work.
+// Because this uses reflection, you must pass in a concrete struct not just the
+// type. For example r.Children is the type but r.Children{} is a struct of that
+// type. Only the latter will work.
 //
 //  func Wrapper(p r.Properties) r.Element {
 //    children := p.GetProperty(
@@ -195,7 +194,10 @@ func filterNilFromProperties(props Properties) (filteredProps Properties) {
 //      children,
 //    )
 //  }
-func (props Properties) GetProperty(propType interface{}, errorMessage string) interface{} {
+func (props Properties) GetProperty(
+	propType interface{},
+	errorMessage string,
+) interface{} {
 	for _, p := range props {
 		if reflect.TypeOf(p) == reflect.TypeOf(propType) {
 			return p
@@ -204,15 +206,17 @@ func (props Properties) GetProperty(propType interface{}, errorMessage string) i
 	panic(errorMessage)
 }
 
-// GetOptionalProperty will search props for the Property matching the type of struct you passed
-// in. If it was not in props, the struct passed into propType will be returned.
+// GetOptionalProperty will search props for the Property matching the type of
+// struct you passed in. If it was not in props, the struct passed into propType
+// will be returned.
 //
-// You need to cast the return type of the function exactly the same as the struct you pass in.
+// You need to cast the return type of the function exactly the same as the
+// struct you pass in.
 //
 // This allows you to specify a defaults for a property.
 //
-// In the following example if Wrapper is not passed a Property of the type component.BoxProps, the
-// default values provided will be used.
+// In the following example if Wrapper is not passed a Property of the type
+// component.BoxProps, the default values provided will be used.
 //
 //  func Wrapper(p r.Properties) r.Element {
 //    boxProps := p.GetOptionalProperty(
@@ -233,7 +237,9 @@ func (props Properties) GetProperty(propType interface{}, errorMessage string) i
 //      children,
 //    )
 //  }
-func (props Properties) GetOptionalProperty(propType interface{}) interface{} {
+func (props Properties) GetOptionalProperty(
+	propType interface{},
+) interface{} {
 	for _, p := range props {
 		if reflect.TypeOf(p) == reflect.TypeOf(propType) {
 			return p
@@ -266,7 +272,8 @@ func ReplaceProps(props Properties, prop interface{}) Properties {
 	return newProps
 }
 
-// AddPropsIfNone will add the prop to props is no existing prop of that type is found.
+// AddPropsIfNone will add the prop to props is no existing prop of that type
+// is found.
 func AddPropsIfNone(props Properties, prop interface{}) Properties {
 	foundProp := false
 

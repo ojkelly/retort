@@ -22,7 +22,7 @@ func Box(p r.Properties) r.Element {
 	// Get our BoxLayout
 	parentBoxLayout := p.GetProperty(
 		r.BoxLayout{},
-		"Box requires a parent BoxLayout. This error shouldn't happen, and is likely an issue with r.",
+		"Box requires a parent BoxLayout.",
 	).(r.BoxLayout)
 
 	// Get any children
@@ -31,10 +31,19 @@ func Box(p r.Properties) r.Element {
 	).(r.Children)
 
 	// Calculate the BoxLayout of this Box
-	boxLayout, innerBoxLayout := calculateBoxLayout(screen, parentBoxLayout, boxProps)
+	boxLayout, innerBoxLayout := calculateBoxLayout(
+		screen,
+		parentBoxLayout,
+		boxProps,
+	)
 
 	// Calculate the BoxLayout of any children
-	childrenWithLayout := calculateBoxLayoutForChildren(screen, boxProps, innerBoxLayout, children)
+	childrenWithLayout := calculateBoxLayoutForChildren(
+		screen,
+		boxProps,
+		innerBoxLayout,
+		children,
+	)
 
 	return r.CreateScreenElement(
 		func(s tcell.Screen) r.BoxLayout {
@@ -53,7 +62,15 @@ func Box(p r.Properties) r.Element {
 
 			st = st.Foreground(boxProps.Border.Foreground)
 
-			drawBox(screen, boxLayout.X, boxLayout.Y, boxLayout.X+boxLayout.Columns, boxLayout.Y+boxLayout.Rows, st, gl)
+			drawBox(
+				screen,
+				boxLayout.X,
+				boxLayout.Y,
+				boxLayout.X+boxLayout.Columns,
+				boxLayout.Y+boxLayout.Rows,
+				st,
+				gl,
+			)
 
 			return boxLayout
 		},
@@ -61,7 +78,12 @@ func Box(p r.Properties) r.Element {
 	)
 }
 
-func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, r rune) {
+func drawBox(
+	s tcell.Screen,
+	x1, y1, x2, y2 int,
+	style tcell.Style,
+	r rune,
+) {
 	if y2 < y1 {
 		y1, y2 = y2, y1
 	}
@@ -91,7 +113,7 @@ func drawBox(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, r rune) {
 	}
 }
 
-// [ BoxModel Types ]-------------------------------------------------------------------------------
+// [ BoxModel Types ]-----------------------------------------------------------
 
 type Padding struct {
 	Top    int
@@ -122,7 +144,7 @@ const (
 	BorderStyleBox // Box drawing characters
 )
 
-// [ FlexBox Types ]--------------------------------------------------------------------------------
+// [ FlexBox Types ]------------------------------------------------------------
 
 type FlexDirection int
 
@@ -150,36 +172,38 @@ const (
 	FlexWrapReverse
 )
 
-// [ FlexBox Funcs ]--------------------------------------------------------------------------------
+// [ FlexBox Funcs ]------------------------------------------------------------
 
 type BoxProps struct {
 	ZIndex int
 
 	// Flex Box
 
-	// The flex-direction CSS property sets how flex items are placed in the flex container defining
-	// the main axis and the direction (normal or reversed).
+	// The flex-direction CSS property sets how flex items are placed in the flex
+	// container defining the main axis and the direction (normal or reversed).
 	FlexDirection FlexDirection
 
 	// The flex-basis CSS property sets the initial main size of a flex item.
 	FlexBasis FlexBasis
 
-	// The flex-grow CSS property sets the flex grow factor of a flex item main size. It specifies how
-	// much of the remaining space in the flex container should be assigned to the item (the flex grow
-	// factor).
+	// The flex-grow CSS property sets the flex grow factor of a flex item main
+	// size. It specifies how much of the remaining space in the flex container
+	// should be assigned to the item (the flex grow factor).
 	FlexGrow int
 
-	// The flex-shrink CSS property sets the flex shrink factor of a flex item. If the size of all
-	// flex items is larger than the flex container, items shrink to fit according to flex-shrink.
+	// The flex-shrink CSS property sets the flex shrink factor of a flex item.
+	// If the size of all flex items is larger than the flex container, items
+	// shrink to fit according to flex-shrink.
 	FlexShrink int // TODO
 
-	// The flex-wrap CSS property sets whether flex items are forced onto one line or can wrap onto
-	// multiple lines. If wrapping is allowed, it sets the direction that lines are stacked.
+	// The flex-wrap CSS property sets whether flex items are forced onto one
+	// line or can wrap onto multiple lines. If wrapping is allowed, it sets the
+	// direction that lines are stacked.
 	FlexWrap FlexWrapOption
 
 	// Content Box
-	// If neither Width,Height or Rows,Columns are set, it will be calculated automatically
-	// When set this is the percentage width and height
+	// If neither Width,Height or Rows,Columns are set, it will be calculated
+	// automatically  When set this is the percentage width and height.
 	// Ignored when Rows,Columns is not 0
 	Width, Height float64 // 0 = auto
 
@@ -193,8 +217,8 @@ type BoxProps struct {
 	Margin  Margin
 
 	// Box Sizing is Border Box only
-	// Border and padding is accounted for inside the width and height, meaning the Box can never
-	// be bigger than the width or height.
+	// Border and padding is accounted for inside the width and height, meaning
+	// the Box can never be bigger than the width or height.
 
 	// Border
 	Border Border
@@ -215,10 +239,18 @@ func calculateBoxLayout(
 	columns := parentBoxLayout.Columns
 
 	if rows == 0 && boxProps.Height != 0 {
-		rows = int(math.Round(float64(parentBoxLayout.Rows) * (boxProps.Height / 100)))
+		rows = int(
+			math.Round(
+				float64(parentBoxLayout.Rows) * (boxProps.Height / 100),
+			),
+		)
 	}
 	if columns == 0 && boxProps.Width != 0 {
-		columns = int(math.Round(float64(parentBoxLayout.Columns) * (boxProps.Width / 100)))
+		columns = int(
+			math.Round(
+				float64(parentBoxLayout.Columns) * (boxProps.Width / 100),
+			),
+		)
 	}
 
 	boxLayout = r.BoxLayout{
@@ -240,8 +272,11 @@ func calculateBoxLayout(
 	boxLayout.Columns = columns - boxProps.Padding.Left - boxProps.Padding.Right
 	boxLayout.Rows = rows - boxProps.Padding.Top - boxProps.Padding.Bottom
 
-	innerBoxLayout.Columns = boxLayout.Columns - boxProps.Padding.Left - boxProps.Padding.Right
-	innerBoxLayout.Rows = boxLayout.Rows - boxProps.Padding.Top - boxProps.Padding.Bottom
+	innerBoxLayout.Columns = boxLayout.Columns -
+		boxProps.Padding.Left - boxProps.Padding.Right
+
+	innerBoxLayout.Rows = boxLayout.Rows -
+		boxProps.Padding.Top - boxProps.Padding.Bottom
 
 	boxLayout.X = parentBoxLayout.X + boxProps.Margin.Left - boxProps.Margin.Right
 	boxLayout.Y = parentBoxLayout.Y + boxProps.Margin.Top - boxProps.Margin.Bottom
@@ -325,8 +360,8 @@ func calculateBoxLayoutForChildren(
 
 	// Find all children with fixed row,col sizing
 	for _, props := range propMap {
-		colsRemaining = colsRemaining - props.Columns // - props.Margin.Left - props.Margin.Right
-		rowsRemaining = rowsRemaining - props.Rows    // - props.Margin.Top - props.Margin.Bottom
+		colsRemaining = colsRemaining - props.Columns
+		rowsRemaining = rowsRemaining - props.Rows
 		flexGrowCount = flexGrowCount + props.FlexGrow
 		if props.FlexGrow == 0 {
 			flexGrowCount = flexGrowCount + 1 // we force flex-grow to be at least 1
@@ -345,7 +380,8 @@ func calculateBoxLayoutForChildren(
 
 	}
 
-	if boxProps.FlexDirection == FlexDirectionRowReverse || boxProps.FlexDirection == FlexDirectionColumnReverse {
+	if boxProps.FlexDirection == FlexDirectionRowReverse ||
+		boxProps.FlexDirection == FlexDirectionColumnReverse {
 		for i := len(children)/2 - 1; i >= 0; i-- {
 			opp := len(children) - 1 - i
 			children[i], children[opp] = children[opp], children[i]

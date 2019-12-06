@@ -2,7 +2,8 @@ package r
 
 import "retort.dev/r/internal/quadtree"
 
-// BoxLayout is used by ScreenElements to determine the exact location to calculate/render from.
+// BoxLayout is used by ScreenElements to determine the exact location to
+// calculate/render from.
 // It represents the concrete positioning information specific
 // to the size of the terminal screen.
 //
@@ -19,8 +20,8 @@ type BoxLayout struct {
 	X, Y, Rows, Columns int
 
 	// ZIndex is the layer this Box is printed on.
-	// Specifically, it determines the order of painting on the screen, with higher
-	// numbers being painted later, and appearing on top.
+	// Specifically, it determines the order of painting on the screen, with
+	// higher numbers being painted later, and appearing on top.
 	// This is also used to direct some events, where the highest zindex is used.
 	ZIndex int
 

@@ -15,7 +15,7 @@ import (
 // 	return r.ctx
 // }
 
-// [ Hooks ]----------------------------------------------------------------------------------------
+// [ Hooks ]--------------------------------------------------------------------
 
 var hookIndex int
 
@@ -56,7 +56,7 @@ func (h *hook) Clone() *hook {
 	}
 }
 
-// [ UseState ]-------------------------------------------------------------------------------------
+// [ UseState ]-----------------------------------------------------------------
 
 type (
 	Action        = func(s State) State
@@ -223,10 +223,12 @@ func checkStateTypesAreUnique(s State) bool {
 	return true
 }
 
-// GetState lets you retrieve the state of your passed in type from a UseState hook.
+// GetState lets you retrieve the state of your passed in type from a UseState
+// hook.
 //
-// Because we cannot use generics this is the closest we can get. This is like Properties
-// where the stateType type is a key to the struct in the slice of interfaces.
+// Because we cannot use generics this is the closest we can get. This is like
+// Properties where the stateType type is a key to the struct in the slice of
+// interfaces.
 // As such, you can only have one of a given type in state.
 func (state State) GetState(stateType interface{}) interface{} {
 	for _, p := range state {
@@ -237,37 +239,42 @@ func (state State) GetState(stateType interface{}) interface{} {
 	return stateType
 }
 
-// [ UseEffect ]------------------------------------------------------------------------------------
+// [ UseEffect ]----------------------------------------------------------------
 
 type (
 	// Effect is the function type you pass to UseEffect.
 	//
 	// It must return an EffectCancel, even if there is nothing to clean up.
 	//
-	// In the Effect you can have a routine to do something (such as fetching data),
-	// and then call SetState from a UseState hook, to update your Component.
+	// In the Effect you can have a routine to do something (such as fetching
+	// data), and then call SetState from a UseState hook, to update your
+	// Component.
 	Effect func() EffectCancel
-	// EffectCancel is a function that must be returned by your Effect, and is called
-	// when the effect is cleaned up or canceled. This allows you to finish anything
-	// you were doing such as closing channels, connections or files.
+	// EffectCancel is a function that must be returned by your Effect, and is
+	// called when the effect is cleaned up or canceled. This allows you to finish
+	// anything you were doing such as closing channels, connections or files.
 	EffectCancel func()
 	// EffectDependencies lets you pass in what your Effect depends upon.
 	// If they change, your Effect will be re-run.
 	EffectDependencies []interface{}
 )
 
-// UseEffect is a retort hook that can be called in your Component to run side effects.
+// UseEffect is a retort hook that can be called in your Component to run side
+// effects.
 //
-// Where UseState allows your components to re-render when their State changes, UseEffect
-// allows you to change that state when you need to.
+// Where UseState allows your components to re-render when their State changes,
+// UseEffect allows you to change that state when you need to.
 //
-// Data fetching is a good example of when you would want something like UseEffect.
+// Data fetching is a good example of when you would want something like
+// UseEffect.
 //
 // Example
 //
-// The example below is a reasonably simple one that changes the color of the border of a
-// box ever 2 seconds. The point here is to show how you can run a goroutine in the UseEffect
-// callback, and clean up the channel in the EffectCancel return function.
+// The example below is a reasonably simple one that changes the color of the
+// border of a box ever 2 seconds. The point here is to show how you can run a
+// goroutine in the UseEffect callback, and clean up the channel in the
+// EffectCancel return function.
+//
 //  import (
 //   "time"
 //
@@ -473,7 +480,7 @@ func (r *retort) processEffects(f *fiber) {
 	r.processEffects(f.sibling)
 }
 
-// [ UseQuit ]--------------------------------------------------------------------------------------
+// [ UseQuit ]------------------------------------------------------------------
 
 // UseQuit returns a single function that when invoked
 // will exit the application
@@ -483,7 +490,7 @@ func UseQuit() func() {
 	}
 }
 
-// [ UseScreen ]------------------------------------------------------------------------------------
+// [ UseScreen ]----------------------------------------------------------------
 
 var useSimulationScreen bool
 var useScreenInstance tcell.Screen

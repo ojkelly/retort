@@ -24,9 +24,11 @@ This to do before this is releasable.
 
 # API
 
-- [] TODO: Can we move hooks to their own package and interact via a channel maybe?
+- [] TODO: Can we move hooks to their own package and interact via a channel
+  - maybe?
   - goal is to clean up the public api as much as possible
 
 # Rendering
 
-- [] TODO: keep track of Z indexs, and render each Zindex on its own layer (ie sequentially, from bottom up)
+- [] TODO: keep track of Z indexs, and render each Zindex on its own layer
+  - (ie sequentially, from bottom up)
