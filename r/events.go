@@ -43,7 +43,9 @@ func (r *retort) handleEvents() {
 			screen.Sync()
 		case *tcell.EventMouse:
 			r.handleMouseEvent(ev)
-
+		case *tcell.EventError:
+		case *tcell.EventInterrupt:
+		case *tcell.EventTime:
 		default:
 			if ev != nil {
 				// debug.Spew("Unhandled Event", ev)
