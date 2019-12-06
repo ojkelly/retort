@@ -26,7 +26,5 @@ jobs:
 
     - name: build
       run: go build -v ./example/cmd
-    - name: lint
-      uses: actions-contrib/golangci-lint@v0.1.0
     - name: test
       run: go test ./...
