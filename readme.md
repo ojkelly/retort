@@ -4,4 +4,4 @@
 
 A reactive terminal user interface library for golang, built ontop of tcell.
 
-Full documentation is available at https://golang.org/pkg/retort.dev
+Full documentation is available at https://godoc.org/retort.dev
