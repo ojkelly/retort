@@ -5,6 +5,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	runewidth "github.com/mattn/go-runewidth"
+	"retort.dev/debug"
 	"retort.dev/r"
 )
 
@@ -12,25 +13,32 @@ func renderText(
 	s tcell.Screen,
 	props Properties,
 	layout r.BoxLayout,
+	scrollIndex int,
 ) {
-
+	debug.Spew("scroll index ", layout.OffsetX)
 	style := tcell.StyleDefault
 	style = style.Foreground(props.Foreground)
 
-	lines := breakText(props, layout)
+	var lines []string
+	for _, text := range strings.Split(props.Value, "\n\n") {
+		lines = append(lines, breakText(text, props, layout)...)
+		lines = append(lines, "")
+	}
 
-	for i, line := range lines {
+	linesToRender := lines[layout.OffsetX:]
+
+	for i, line := range linesToRender {
 		renderLine(s, style, layout.X, layout.Y+i, line)
 	}
 }
 
 // breakText into rows to text that can be printed.
 // This function handles all logic related to word breaking.
-func breakText(props Properties, layout r.BoxLayout) (lines []string) {
-	width := layout.Columns - 2
+func breakText(text string, props Properties, layout r.BoxLayout) (lines []string) {
+	width := layout.Columns
 
 	// Break up words by whitespace characters
-	words := strings.Fields(props.Value)
+	words := strings.Fields(text)
 
 	// if there's no words bail here
 	if len(words) == 0 {
@@ -41,8 +49,24 @@ func breakText(props Properties, layout r.BoxLayout) (lines []string) {
 	colsRemaining := width
 
 	for _, word := range words {
-		if len(word)+4 > colsRemaining {
+		if colsRemaining == 0 {
+			// Save this line
+			lines = append(lines, line)
+
+			// And make a new one
+			line = word
+			colsRemaining = width
+			continue
+		}
+
+		if len(word) > colsRemaining {
 			// Can we break the word?
+			if props.WordBreak == BreakAll {
+				// TODO: this isn't great, and could be greatly improved
+				wordPart := word[:colsRemaining] + "-"
+				line = line + wordPart
+				word = word[colsRemaining:]
+			}
 
 			// Save this line
 			lines = append(lines, line)
@@ -50,9 +74,13 @@ func breakText(props Properties, layout r.BoxLayout) (lines []string) {
 			// And make a new one
 			line = word
 			colsRemaining = width
-		} else {
-			line = line + word + " "
-			colsRemaining = colsRemaining - len(word) - 1
+			continue
+		}
+
+		line = line + word + " "
+		colsRemaining = colsRemaining - len(word) - 1
+		if colsRemaining < 0 {
+			colsRemaining = 0
 		}
 	}
 

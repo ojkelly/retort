@@ -140,13 +140,16 @@ func CreateFragment(props Properties, children Children) *fiber {
 //			nil,
 //		)
 //	}
-func CreateScreenElement(render RenderToScreen, children Children) *fiber {
+func CreateScreenElement(render RenderToScreen, props Properties, children Children) *fiber {
 	// debug.Spew("CreateScreenElement", render)
 	return &fiber{
 		componentType:  screenComponent,
 		renderToScreen: &render,
-		Properties:     Properties{children},
-		component:      nil,
+		Properties: append(
+			props,
+			children,
+		),
+		component: nil,
 	}
 }
 

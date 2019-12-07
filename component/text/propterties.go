@@ -3,8 +3,9 @@ package text
 import "github.com/gdamore/tcell"
 
 type Properties struct {
-	Value    string
-	Overflow Overflow
+	Value     string
+	Overflow  Overflow
+	WordBreak WordBreak
 
 	Background tcell.Color
 	Foreground tcell.Color

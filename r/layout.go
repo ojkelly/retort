@@ -27,6 +27,9 @@ type BoxLayout struct {
 
 	// Order is set to control the display order of a group of flex box children
 	Order int
+
+	// OffsetX, OffsetY indicates if the contents should be rendered at an offset
+	OffsetX, OffsetY int
 }
 
 // reconcileQuadTree updates the quadtree with our new layout, and provides

@@ -66,22 +66,10 @@ func calculateBoxLayout(
 		boxProps.Padding.Top - boxProps.Padding.Bottom
 
 	// Calculate padding box
-
-	if boxProps.Padding.Top != 0 {
-		innerBoxLayout.Y = innerBoxLayout.Y + boxProps.Padding.Top
-	}
-
-	if boxProps.Padding.Right != 0 {
-		innerBoxLayout.Columns = innerBoxLayout.Columns - boxProps.Padding.Right
-	}
-
-	if boxProps.Padding.Bottom != 0 {
-		innerBoxLayout.Rows = innerBoxLayout.Rows - boxProps.Padding.Bottom
-	}
-
-	if boxProps.Padding.Left != 0 {
-		innerBoxLayout.X = innerBoxLayout.X + boxProps.Padding.Left
-	}
+	innerBoxLayout.Y = innerBoxLayout.Y + boxProps.Padding.Top
+	innerBoxLayout.Columns = innerBoxLayout.Columns - boxProps.Padding.Right - 10
+	innerBoxLayout.Rows = innerBoxLayout.Rows - boxProps.Padding.Bottom
+	innerBoxLayout.X = innerBoxLayout.X + boxProps.Padding.Left
 
 	// Border Sizing
 
@@ -91,8 +79,8 @@ func calculateBoxLayout(
 
 		innerBoxLayout.X = innerBoxLayout.X + 1
 		innerBoxLayout.Y = innerBoxLayout.Y + 1
-		innerBoxLayout.Rows = innerBoxLayout.Rows - 2
-		innerBoxLayout.Columns = innerBoxLayout.Columns - 2
+		innerBoxLayout.Rows = innerBoxLayout.Rows - 1
+		innerBoxLayout.Columns = innerBoxLayout.Columns - 1
 	}
 
 	// Ensure the rows and cols are not below 0

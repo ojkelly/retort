@@ -24,7 +24,7 @@ func init() {
 }
 
 func Spew(message ...interface{}) {
-	return
+	// return
 	// start := time.Now()
 
 	// go func() {

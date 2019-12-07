@@ -22,7 +22,6 @@ func Text(p r.Properties) r.Element {
 		r.BoxLayout{},
 		"Text requires a parent BoxLayout.",
 	).(r.BoxLayout)
-	debug.Spew("text parentBoxLayout", parentBoxLayout)
 	// Get any children
 	children := p.GetOptionalProperty(
 		r.Children{},
@@ -37,6 +36,8 @@ func Text(p r.Properties) r.Element {
 		parentBoxLayout,
 		textProps,
 	)
+
+	debug.Spew("boxLayout.OffsetX", boxLayout.OffsetX)
 
 	return r.CreateScreenElement(
 		func(s tcell.Screen) r.BoxLayout {
@@ -54,10 +55,12 @@ func Text(p r.Properties) r.Element {
 				s,
 				textProps,
 				boxLayout,
+				boxLayout.OffsetX,
 			)
 
 			return boxLayout
 		},
+		r.Properties{},
 		nil,
 	)
 }

@@ -3,7 +3,6 @@ package example
 import (
 	"github.com/gdamore/tcell"
 	"retort.dev/component/box"
-	"retort.dev/debug"
 	"retort.dev/r"
 )
 
@@ -30,7 +29,6 @@ func ClickableBox(p r.Properties) r.Element {
 	).(MovingBoxState)
 
 	mouseEventHandler := func(e *tcell.EventMouse) {
-		debug.Spew("mouseEventHandler", e, state)
 		color := tcell.ColorGreen
 		if state.Color == tcell.ColorGreen {
 			color = tcell.ColorBlue
@@ -41,8 +39,6 @@ func ClickableBox(p r.Properties) r.Element {
 		}
 
 		setState(func(s r.State) r.State {
-			debug.Spew("mouseEventHandler update state", e, state)
-
 			return r.State{MovingBoxState{
 				Color: color,
 			},

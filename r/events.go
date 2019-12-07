@@ -69,25 +69,6 @@ func (r *retort) handleMouseEvent(ev *tcell.EventMouse) {
 	}
 
 	x, y := ev.Position()
-	button := ev.Buttons()
-
-	// Only buttons, not wheel events
-	button &= tcell.ButtonMask(0xff)
-
-	if button == tcell.ButtonNone {
-		return
-	}
-
-	switch ev.Buttons() {
-	case tcell.Button1:
-	case tcell.Button2:
-	case tcell.Button3:
-	case tcell.Button4:
-	case tcell.Button5:
-	case tcell.Button6:
-	case tcell.Button7:
-	case tcell.Button8:
-	}
 
 	cursor := quadtree.Bounds{
 		X:      x,
