@@ -1,6 +1,8 @@
 package box
 
 import (
+	"time"
+
 	"github.com/gdamore/tcell"
 
 	"retort.dev/debug"
@@ -9,6 +11,7 @@ import (
 
 type boxState struct {
 	OffsetX, OffsetY int
+	lastUpdated      time.Time
 }
 
 // Box is the basic building block for a retort app.
@@ -34,7 +37,7 @@ func Box(p r.Properties) r.Element {
 	).(r.Children)
 
 	s, setState := r.UseState(r.State{
-		boxState{},
+		boxState{lastUpdated: time.Now()},
 	})
 	state := s.GetState(
 		boxState{},
@@ -60,14 +63,24 @@ func Box(p r.Properties) r.Element {
 			return
 		}
 
+		now := time.Now()
+
+		if now.Sub(state.lastUpdated) < 16*time.Millisecond {
+			debug.Spew("throttled ", now.Sub(state.lastUpdated), state.lastUpdated, now)
+			// throttle to one update a second
+			return
+		}
+
 		setState(func(s r.State) r.State {
 			state := s.GetState(
 				boxState{},
 			).(boxState)
 
+			// BUG(ojkelly): this is a bit janky and could be better
 			return r.State{boxState{
-				OffsetX: state.OffsetX + offsetX,
-				OffsetY: state.OffsetY + offsetY,
+				OffsetX:     min(intAbs(state.OffsetX+offsetX), int(float64(parentBoxLayout.Columns)/0.2)),
+				OffsetY:     min(intAbs(state.OffsetY+offsetY), int(float64(parentBoxLayout.Rows)/0.2)),
+				lastUpdated: time.Now(),
 			},
 			}
 		})
@@ -90,8 +103,7 @@ func Box(p r.Properties) r.Element {
 		innerBoxLayout,
 		children,
 	)
-	debug.Spew("innerBoxLayout.OffsetX", innerBoxLayout.OffsetX)
-	debug.Spew("state.OffsetX", state.OffsetX)
+
 	return r.CreateScreenElement(
 		func(s tcell.Screen) r.BoxLayout {
 			if s == nil {
@@ -115,4 +127,18 @@ func Box(p r.Properties) r.Element {
 		r.Properties{mouseEventHandler},
 		childrenWithLayout,
 	)
+}
+
+func intAbs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}
+
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
 }

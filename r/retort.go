@@ -169,6 +169,8 @@ func Retort(root Element, config RetortConfiguration) {
 		frameTick := time.NewTicker(16 * time.Millisecond)
 		shouldYield := false
 
+		var droppedFrames int
+
 	workloop:
 		for {
 			select {
@@ -184,11 +186,19 @@ func Retort(root Element, config RetortConfiguration) {
 					r.updateTree()
 				}
 				if r.hasChangesToRender {
+					// If there's still setStates to add to the queue, give them a chance
+					// to be added
+					if len(setStateChan) > 0 && droppedFrames == 0 {
+						droppedFrames++
+						continue
+					}
 					workTick = time.NewTicker(1 * time.Nanosecond)
+					droppedFrames = 0
 				}
 				deadline = time.Now().Add(14 * time.Millisecond)
 
 			case <-workTick.C:
+
 				if !r.hasChangesToRender {
 					// While we have work to do, this case is run very frequently
 					// But when we have no work to do it can consume considerable CPU time

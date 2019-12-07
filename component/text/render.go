@@ -5,7 +5,6 @@ import (
 
 	"github.com/gdamore/tcell"
 	runewidth "github.com/mattn/go-runewidth"
-	"retort.dev/debug"
 	"retort.dev/r"
 )
 
@@ -13,9 +12,8 @@ func renderText(
 	s tcell.Screen,
 	props Properties,
 	layout r.BoxLayout,
-	scrollIndex int,
 ) {
-	debug.Spew("scroll index ", layout.OffsetX)
+
 	style := tcell.StyleDefault
 	style = style.Foreground(props.Foreground)
 
@@ -25,16 +23,33 @@ func renderText(
 		lines = append(lines, "")
 	}
 
-	linesToRender := lines[layout.OffsetX:]
+	scrollLimit := int(float64(len(lines)) / 1.2)
+	offset := 0
+	if layout.OffsetX < len(lines) {
+		offset = layout.OffsetX
+	}
+	if layout.OffsetX > scrollLimit {
+		offset = scrollLimit
+	}
+
+	linesToRender := lines[offset:]
 
 	for i, line := range linesToRender {
+		if i > layout.Rows {
+			return
+		}
+
 		renderLine(s, style, layout.X, layout.Y+i, line)
 	}
 }
 
 // breakText into rows to text that can be printed.
 // This function handles all logic related to word breaking.
-func breakText(text string, props Properties, layout r.BoxLayout) (lines []string) {
+func breakText(
+	text string,
+	props Properties,
+	layout r.BoxLayout,
+) (lines []string) {
 	width := layout.Columns
 
 	// Break up words by whitespace characters
@@ -59,7 +74,7 @@ func breakText(text string, props Properties, layout r.BoxLayout) (lines []strin
 			continue
 		}
 
-		if len(word) > colsRemaining {
+		if len(word)+2 > colsRemaining {
 			// Can we break the word?
 			if props.WordBreak == BreakAll {
 				// TODO: this isn't great, and could be greatly improved

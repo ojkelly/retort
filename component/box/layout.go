@@ -79,8 +79,8 @@ func calculateBoxLayout(
 
 		innerBoxLayout.X = innerBoxLayout.X + 1
 		innerBoxLayout.Y = innerBoxLayout.Y + 1
-		innerBoxLayout.Rows = innerBoxLayout.Rows - 1
-		innerBoxLayout.Columns = innerBoxLayout.Columns - 1
+		innerBoxLayout.Rows = innerBoxLayout.Rows - 4
+		innerBoxLayout.Columns = innerBoxLayout.Columns - 2
 	}
 
 	// Ensure the rows and cols are not below 0
@@ -206,6 +206,8 @@ func calculateBoxLayoutForChildren(
 			Columns: columns,
 			ZIndex:  boxProps.ZIndex,
 			Order:   i,
+			OffsetX: innerBoxLayout.OffsetX,
+			OffsetY: innerBoxLayout.OffsetY,
 		}
 
 		switch boxProps.FlexDirection {
