@@ -44,21 +44,21 @@ func Box(p r.Properties) r.Element {
 	).(boxState)
 
 	mouseEventHandler := func(ev *tcell.EventMouse) {
-		offsetX := 0
-		offsetY := 0
+		offsetXDelta := 0
+		offsetYDelta := 0
 
 		switch ev.Buttons() {
 		case tcell.WheelUp:
-			offsetX = -1
+			offsetXDelta = -1
 		case tcell.WheelDown:
-			offsetX = 1
+			offsetXDelta = 1
 		case tcell.WheelLeft:
-			offsetY = -1
+			offsetYDelta = -1
 		case tcell.WheelRight:
-			offsetY = 1
+			offsetYDelta = 1
 		}
 
-		if offsetX == 0 && offsetY == 0 {
+		if offsetXDelta == 0 && offsetYDelta == 0 {
 			// nothing to update
 			return
 		}
@@ -77,9 +77,21 @@ func Box(p r.Properties) r.Element {
 			).(boxState)
 
 			// BUG(ojkelly): this is a bit janky and could be better
+
+			offsetX := state.OffsetX
+			offsetY := state.OffsetY
+
+			if boxProps.Overflow == OverflowScroll || boxProps.Overflow == OverflowScrollX {
+				offsetX = min(intAbs(state.OffsetX+offsetXDelta), int(float64(parentBoxLayout.Columns)/0.2))
+			}
+
+			if boxProps.Overflow == OverflowScroll || boxProps.Overflow == OverflowScrollY {
+				offsetY = min(intAbs(state.OffsetY+offsetYDelta), int(float64(parentBoxLayout.Rows)/0.2))
+			}
+
 			return r.State{boxState{
-				OffsetX:     min(intAbs(state.OffsetX+offsetX), int(float64(parentBoxLayout.Columns)/0.2)),
-				OffsetY:     min(intAbs(state.OffsetY+offsetY), int(float64(parentBoxLayout.Rows)/0.2)),
+				OffsetX:     offsetX,
+				OffsetY:     offsetY,
 				lastUpdated: time.Now(),
 			},
 			}
@@ -104,6 +116,12 @@ func Box(p r.Properties) r.Element {
 		children,
 	)
 
+	props := r.Properties{}
+
+	if boxProps.Overflow != OverflowNone {
+		props = append(props, mouseEventHandler)
+	}
+
 	return r.CreateScreenElement(
 		func(s tcell.Screen) r.BoxLayout {
 			if s == nil {
@@ -124,7 +142,7 @@ func Box(p r.Properties) r.Element {
 
 			return boxLayout
 		},
-		r.Properties{mouseEventHandler},
+		props,
 		childrenWithLayout,
 	)
 }

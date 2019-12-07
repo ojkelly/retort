@@ -66,6 +66,8 @@ type Properties struct {
 	Background tcell.Color
 	Foreground tcell.Color
 
+	Overflow Overflow
+
 	// Title is a Label placed on the top border
 	Title Label
 
@@ -102,6 +104,15 @@ const (
 	BorderStyleSingle
 	BorderStyleDouble
 	BorderStyleBox // Box drawing characters
+)
+
+type Overflow int
+
+const (
+	OverflowNone Overflow = iota
+	OverflowScroll
+	OverflowScrollX
+	OverflowScrollY
 )
 
 // [ FlexBox Types ]------------------------------------------------------------

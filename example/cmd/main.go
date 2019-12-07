@@ -50,6 +50,7 @@ func main() {
 							Title: box.Label{
 								Value: "Example",
 							},
+							Overflow: box.OverflowScrollX,
 						},
 					},
 					r.Children{
