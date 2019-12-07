@@ -5,7 +5,7 @@ import (
 
 	"github.com/gdamore/tcell"
 
-	"retort.dev/component"
+	"retort.dev/component/box"
 	"retort.dev/example"
 	"retort.dev/r"
 )
@@ -14,13 +14,13 @@ func main() {
 
 	group := r.Children{
 		r.CreateElement(
-			example.ClickableBox,
+			box.Box,
 			r.Properties{
-				component.BoxProps{
+				box.Properties{
 					FlexGrow:   3,
 					Foreground: tcell.ColorBeige,
-					Border: component.Border{
-						Style:      component.BorderStyleSingle,
+					Border: box.Border{
+						Style:      box.BorderStyleSingle,
 						Foreground: tcell.ColorWhite,
 					},
 				},
@@ -30,11 +30,11 @@ func main() {
 		r.CreateElement(
 			example.ClickableBox,
 			r.Properties{
-				component.BoxProps{
+				box.Properties{
 					FlexGrow:   1,
 					Foreground: tcell.ColorCadetBlue,
-					Border: component.Border{
-						Style:      component.BorderStyleSingle,
+					Border: box.Border{
+						Style:      box.BorderStyleSingle,
 						Foreground: tcell.ColorWhite,
 					},
 				},
@@ -44,12 +44,12 @@ func main() {
 		r.CreateElement(
 			example.ClickableBox,
 			r.Properties{
-				component.BoxProps{
+				box.Properties{
 					FlexGrow:   1,
 					Foreground: tcell.ColorLawnGreen,
-					Border: component.Border{
-						Style:      component.BorderStyleSingle,
-						Foreground: tcell.ColorWhite,
+					Border: box.Border{
+						Style:      box.BorderStyleSingle,
+						Foreground: tcell.ColorLavender,
 					},
 				},
 			},
@@ -58,11 +58,11 @@ func main() {
 		r.CreateElement(
 			example.ClickableBox,
 			r.Properties{
-				component.BoxProps{
+				box.Properties{
 					FlexGrow:   1,
 					Foreground: tcell.ColorLightCyan,
-					Border: component.Border{
-						Style:      component.BorderStyleSingle,
+					Border: box.Border{
+						Style:      box.BorderStyleSingle,
 						Foreground: tcell.ColorWhite,
 					},
 				},
@@ -73,29 +73,33 @@ func main() {
 
 	r.Retort(
 		r.CreateElement(
-			example.ClickableBox,
+			box.Box,
 			r.Properties{
-				component.BoxProps{
-					Width:      100,
-					Height:     100,
-					Foreground: tcell.ColorGold,
-					Border: component.Border{
-						Style:      component.BorderStyleSingle,
-						Foreground: tcell.ColorWhite,
-					},
+				box.Properties{
+					Width:  100,
+					Height: 100,
 				},
 			},
 			r.Children{
 				r.CreateElement(
 					example.EffectExampleBox,
 					r.Properties{
-						component.BoxProps{
+						box.Properties{
 							FlexGrow:      3,
 							Foreground:    tcell.ColorBeige,
-							FlexDirection: component.FlexDirectionColumn,
-							Border: component.Border{
-								Style:      component.BorderStyleSingle,
+							FlexDirection: box.FlexDirectionColumn,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
+							},
+							Padding: box.Padding{
+								Top:    1,
+								Right:  1,
+								Bottom: 1,
+								Left:   1,
+							},
+							Title: box.Label{
+								Value: "Example",
 							},
 						},
 					},
@@ -104,11 +108,11 @@ func main() {
 				r.CreateElement(
 					example.ClickableBox,
 					r.Properties{
-						component.BoxProps{
+						box.Properties{
 							FlexGrow:   1,
 							Foreground: tcell.ColorCadetBlue,
-							Border: component.Border{
-								Style:      component.BorderStyleSingle,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
 							},
 						},
@@ -118,11 +122,11 @@ func main() {
 				r.CreateElement(
 					example.ClickableBox,
 					r.Properties{
-						component.BoxProps{
+						box.Properties{
 							FlexGrow:   1,
 							Foreground: tcell.ColorLawnGreen,
-							Border: component.Border{
-								Style:      component.BorderStyleSingle,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
 							},
 						},
@@ -132,11 +136,11 @@ func main() {
 				r.CreateElement(
 					example.EffectExampleBox,
 					r.Properties{
-						component.BoxProps{
+						box.Properties{
 							FlexGrow:   1,
 							Foreground: tcell.ColorLightCyan,
-							Border: component.Border{
-								Style:      component.BorderStyleSingle,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
 							},
 						},

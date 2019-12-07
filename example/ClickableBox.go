@@ -2,7 +2,7 @@ package example
 
 import (
 	"github.com/gdamore/tcell"
-	"retort.dev/component"
+	"retort.dev/component/box"
 	"retort.dev/debug"
 	"retort.dev/r"
 )
@@ -13,9 +13,9 @@ type MovingBoxState struct {
 
 func ClickableBox(p r.Properties) r.Element {
 	boxProps := p.GetProperty(
-		component.BoxProps{},
+		box.Properties{},
 		"Container requires ContainerProps",
-	).(component.BoxProps)
+	).(box.Properties)
 
 	children := p.GetProperty(
 		r.Children{},
@@ -53,7 +53,7 @@ func ClickableBox(p r.Properties) r.Element {
 	boxProps.Border.Foreground = state.Color
 
 	return r.CreateElement(
-		component.Box,
+		box.Box,
 		r.Properties{
 			boxProps,
 			mouseEventHandler,

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/component"
+	"retort.dev/component/box"
 	"retort.dev/r"
 )
 
@@ -14,9 +14,9 @@ type EffectExampleBoxState struct {
 
 func EffectExampleBox(p r.Properties) r.Element {
 	boxProps := p.GetProperty(
-		component.BoxProps{},
+		box.Properties{},
 		"Container requires ContainerProps",
-	).(component.BoxProps)
+	).(box.Properties)
 
 	children := p.GetProperty(
 		r.Children{},
@@ -68,7 +68,6 @@ func EffectExampleBox(p r.Properties) r.Element {
 		}
 	}, r.EffectDependencies{})
 
-	// var mouseEventHandler r.MouseEventHandler
 	mouseEventHandler := func(e *tcell.EventMouse) {
 		color := tcell.ColorGreen
 		if state.Color == tcell.ColorGreen {
@@ -90,7 +89,7 @@ func EffectExampleBox(p r.Properties) r.Element {
 	boxProps.Border.Foreground = state.Color
 
 	return r.CreateElement(
-		component.Box,
+		box.Box,
 		r.Properties{
 			boxProps,
 			mouseEventHandler,
