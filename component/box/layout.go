@@ -44,8 +44,8 @@ func calculateBoxLayout(
 	// Calculate box size
 	boxLayout.Columns = columns
 	boxLayout.Rows = rows
-	// Calculate margin
 
+	// Calculate margin
 	boxLayout.X = parentBoxLayout.X + boxProps.Margin.Left
 	boxLayout.Columns = boxLayout.Columns - boxProps.Margin.Right
 	boxLayout.Y = parentBoxLayout.Y + boxProps.Margin.Top
@@ -53,8 +53,8 @@ func calculateBoxLayout(
 
 	innerBoxLayout = r.BoxLayout{
 		ZIndex:  boxProps.ZIndex,
-		Rows:    rows,
-		Columns: columns,
+		Rows:    boxLayout.Rows,
+		Columns: boxLayout.Columns,
 		X:       boxLayout.X,
 		Y:       boxLayout.Y,
 	}
@@ -117,7 +117,6 @@ func calculateBoxLayoutForChildren(
 	innerBoxLayout r.BoxLayout,
 	children r.Children,
 ) r.Children {
-
 	if len(children) == 0 {
 		return children
 	}
@@ -133,6 +132,7 @@ func calculateBoxLayoutForChildren(
 		if c == nil {
 			continue
 		}
+
 		propMap[c] = c.Properties.GetOptionalProperty(
 			Properties{},
 		).(Properties)
@@ -143,6 +143,7 @@ func calculateBoxLayoutForChildren(
 		colsRemaining = colsRemaining - props.Columns
 		rowsRemaining = rowsRemaining - props.Rows
 		flexGrowCount = flexGrowCount + props.FlexGrow
+
 		if props.FlexGrow == 0 {
 			flexGrowCount = flexGrowCount + 1 // we force flex-grow to be at least 1
 		}
@@ -160,6 +161,7 @@ func calculateBoxLayoutForChildren(
 
 	}
 
+	// Reverse the slices if needed
 	if boxProps.FlexDirection == FlexDirectionRowReverse ||
 		boxProps.FlexDirection == FlexDirectionColumnReverse {
 		for i := len(children)/2 - 1; i >= 0; i-- {
@@ -177,53 +179,58 @@ func calculateBoxLayoutForChildren(
 		}
 
 		props := propMap[el]
+		flexGrow := props.FlexGrow
 
-		row := 0
-		c := 0
-		z := boxProps.ZIndex
+		if props.FlexGrow == 0 {
+			flexGrow = flexGrow + 1 // we force flex-grow to be at least 1
+		}
+
+		rows := 0
+		columns := 0
 
 		switch boxProps.FlexDirection {
 		case FlexDirectionRow:
-			c = flexGrowDivision * props.FlexGrow
-			row = innerBoxLayout.Rows
+			columns = flexGrowDivision * flexGrow
+			rows = innerBoxLayout.Rows
 		case FlexDirectionRowReverse:
-			c = flexGrowDivision * props.FlexGrow
-			row = innerBoxLayout.Rows
+			columns = flexGrowDivision * flexGrow
+			rows = innerBoxLayout.Rows
 		case FlexDirectionColumn:
-			c = innerBoxLayout.Columns
-			row = flexGrowDivision * props.FlexGrow
+			columns = innerBoxLayout.Columns
+			rows = flexGrowDivision * flexGrow
 		case FlexDirectionColumnReverse:
-			c = innerBoxLayout.Columns
-			row = flexGrowDivision * props.FlexGrow
+			columns = innerBoxLayout.Columns
+			rows = flexGrowDivision * flexGrow
 		}
 
-		// Ensure r and c aren't negative
-		if row < 0 {
-			row = 0
+		// Ensure rows and columns aren't negative
+		if rows < 0 {
+			rows = 0
 		}
-		if c < 0 {
-			c = 0
+		if columns < 0 {
+			columns = 0
 		}
 
 		boxLayout := r.BoxLayout{
 			X:       x,
 			Y:       y,
-			Rows:    row,
-			Columns: c,
-			ZIndex:  z,
+			Rows:    rows,
+			Columns: columns,
+			ZIndex:  boxProps.ZIndex,
 			Order:   i,
 		}
 
 		switch boxProps.FlexDirection {
 		case FlexDirectionRow:
-			x = x + c
+			x = x + columns
 		case FlexDirectionRowReverse:
-			x = x + c
+			x = x + columns
 		case FlexDirectionColumn:
-			y = y + row
+			y = y + rows
 		case FlexDirectionColumnReverse:
-			y = y + row
+			y = y + rows
 		}
+
 		el.Properties = r.ReplaceProps(el.Properties, boxLayout)
 	}
 	return children
