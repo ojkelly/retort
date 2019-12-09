@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"time"
 	// "github.com/davecgh/go-spew/spew"
 )
 
@@ -25,8 +24,8 @@ func init() {
 }
 
 func Spew(message ...interface{}) {
-	return
-	start := time.Now()
+	// return
+	// start := time.Now()
 
 	// go func() {
 	debugMutex.Lock()
@@ -35,7 +34,7 @@ func Spew(message ...interface{}) {
 	debugFile.WriteString(fmt.Sprint(message...))
 	// spew.Fdump(debugFile, message...)
 
-	debugFile.WriteString(fmt.Sprintf("debug print time %s", time.Since(start)))
+	// debugFile.WriteString(fmt.Sprintf("debug print time %s", time.Since(start)))
 	debugMutex.Unlock()
 	// }()
 
