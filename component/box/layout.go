@@ -206,8 +206,6 @@ func calculateBoxLayoutForChildren(
 			Columns: columns,
 			ZIndex:  boxProps.ZIndex,
 			Order:   i,
-			OffsetX: innerBoxLayout.OffsetX,
-			OffsetY: innerBoxLayout.OffsetY,
 		}
 
 		switch boxProps.FlexDirection {

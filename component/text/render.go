@@ -12,6 +12,7 @@ func renderText(
 	s tcell.Screen,
 	props Properties,
 	layout r.BoxLayout,
+	offsetX, offsetY int,
 ) {
 
 	style := tcell.StyleDefault
@@ -25,10 +26,10 @@ func renderText(
 
 	scrollLimit := int(float64(len(lines)) / 1.2)
 	offset := 0
-	if layout.OffsetX < len(lines) {
-		offset = layout.OffsetX
+	if offsetX < len(lines) {
+		offset = offsetX
 	}
-	if layout.OffsetX > scrollLimit {
+	if offsetX > scrollLimit {
 		offset = scrollLimit
 	}
 

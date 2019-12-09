@@ -28,7 +28,11 @@ func ClickableBox(p r.Properties) r.Element {
 		MovingBoxState{},
 	).(MovingBoxState)
 
-	mouseEventHandler := func(e *tcell.EventMouse) {
+	mouseEventHandler := func(
+		isPrimary,
+		isSecondary bool,
+		buttonMask tcell.ButtonMask,
+	) r.EventMouseClickRelease {
 		color := tcell.ColorGreen
 		if state.Color == tcell.ColorGreen {
 			color = tcell.ColorBlue
@@ -44,6 +48,7 @@ func ClickableBox(p r.Properties) r.Element {
 			},
 			}
 		})
+		return func() {}
 	}
 
 	boxProps.Border.Foreground = state.Color
