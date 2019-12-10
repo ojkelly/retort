@@ -5,7 +5,6 @@ import (
 
 	"github.com/gdamore/tcell"
 	"retort.dev/component/box"
-	"retort.dev/debug"
 	"retort.dev/r"
 )
 
@@ -59,29 +58,9 @@ func Text(p r.Properties) r.Element {
 	)
 
 	mouseEventHandler := func(up, down, left, right bool) {
-		offsetXDelta := 0
-		offsetYDelta := 0
-
-		switch {
-		case up:
-			offsetXDelta = -1
-		case down:
-			offsetXDelta = 1
-		case left:
-			offsetYDelta = -1
-		case right:
-			offsetYDelta = 1
-		}
-
-		if offsetXDelta == 0 && offsetYDelta == 0 {
-			// nothing to update
-			return
-		}
-
 		now := time.Now()
 
 		if now.Sub(state.lastUpdated) < 16*time.Millisecond {
-			debug.Spew("throttled ", now.Sub(state.lastUpdated), state.lastUpdated, now)
 			// throttle to one update a second
 			return
 		}
@@ -91,25 +70,59 @@ func Text(p r.Properties) r.Element {
 				boxState{},
 			).(boxState)
 
-			// BUG(ojkelly): this is a bit janky and could be better
+			offsetXDelta := 0
+			offsetYDelta := 0
+
+			switch {
+			case up:
+				offsetXDelta = -1
+				if state.OffsetX == 0 {
+					return r.State{state}
+				}
+			case down:
+				offsetXDelta = 1
+			case left:
+				offsetYDelta = -1
+				if state.OffsetY == 0 {
+					return r.State{state}
+				}
+
+			case right:
+				offsetYDelta = 1
+			}
+
+			if offsetXDelta == 0 && offsetYDelta == 0 {
+				return r.State{state}
+			}
 
 			offsetX := state.OffsetX
 			offsetY := state.OffsetY
 
 			if boxProps.Overflow == box.OverflowScroll ||
 				boxProps.Overflow == box.OverflowScrollX {
-				offsetX = min(
-					intAbs(state.OffsetX+offsetXDelta),
-					int(float64(parentBoxLayout.Columns)/0.2),
-				)
+				// When the offset is near the top, we just set the value
+				// this prevents issues with the float64 conversion below
+				// that was casuing jankiness
+				if state.OffsetX < 3 {
+					offsetX = state.OffsetX + offsetXDelta
+				} else {
+					offsetX = min(
+						intAbs(state.OffsetX+offsetXDelta),
+						int(float64(parentBoxLayout.Columns)/0.2),
+					)
+				}
 			}
 
 			if boxProps.Overflow == box.OverflowScroll ||
 				boxProps.Overflow == box.OverflowScrollY {
-				offsetY = min(
-					intAbs(state.OffsetY+offsetYDelta),
-					int(float64(parentBoxLayout.Rows)/0.2),
-				)
+				if offsetY < 3 {
+					offsetY = state.OffsetY + offsetYDelta
+				} else {
+					offsetY = min(
+						intAbs(state.OffsetY+offsetYDelta),
+						int(float64(parentBoxLayout.Rows)/0.2),
+					)
+				}
 			}
 
 			return r.State{boxState{

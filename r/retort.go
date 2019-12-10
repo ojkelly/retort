@@ -198,7 +198,6 @@ func Retort(root Element, config RetortConfiguration) {
 				deadline = time.Now().Add(14 * time.Millisecond)
 
 			case <-workTick.C:
-
 				if !r.hasChangesToRender {
 					// While we have work to do, this case is run very frequently
 					// But when we have no work to do it can consume considerable CPU time

@@ -19,22 +19,22 @@ func (r *retort) commitRoot() {
 
 	// Draw
 	r.commitWork(r.wipRoot)
-	// debug.Spew("committed work", r)
+
 	screen.Show()
 
 	// Update effects
 	r.processEffects(r.wipRoot)
-	// debug.Spew("processed effects")
 
 	// Update our quadtree for collisions
 	r.quadtree.Clear()
-	// debug.Spew("clear QuadTree", r.quadtree)
 	r.reconcileQuadTree(r.wipRoot)
-	debug.Spew("reconciled QuadTree", r.quadtree.Total)
 
+	// Clean up and prepare for the next render pass
 	r.currentRoot = r.wipRoot
 	r.wipRoot = nil
 	r.hasChangesToRender = false
+
+	hookFiber = nil
 	debug.Spew("committed root")
 }
 
