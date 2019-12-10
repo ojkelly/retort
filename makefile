@@ -8,6 +8,11 @@ dev:
 	rm debug.log || true
 	go run example/cmd/main.go
 
+# Build the hn app
+hn:
+	go run example/hackernews/main.go
+
+
 # Run the example app with the race detector
 race:
 	rm debug.log || true

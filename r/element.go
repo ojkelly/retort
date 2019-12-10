@@ -91,7 +91,7 @@ func CreateElement(
 	props Properties,
 	children Children,
 ) *fiber {
-	// debug.Spew("CreateElement", component, props, children)
+	// debug.Log("CreateElement", component, props, children)
 	if !checkPropTypesAreUnique(props) {
 		panic("props are not unique")
 	}
@@ -105,19 +105,16 @@ func CreateElement(
 	}
 }
 
-// CreateFragment is like CreateElement except you do not need a Component.
-func CreateFragment(props Properties, children Children) *fiber {
-	// debug.Spew("CreateFragment", props, children)
-	if !checkPropTypesAreUnique(props) {
-		panic("props are not unique")
-	}
+// CreateFragment is like CreateElement except you do not need a Component
+// or Properties. This is useful when you need to make Higher Order Components,
+// or other Components that wrap or compose yet more Components.
+func CreateFragment(children Children) *fiber {
 	return &fiber{
 		componentType: fragmentComponent,
 		component:     nil,
-		Properties: append(
-			props,
+		Properties: Properties{
 			children,
-		),
+		},
 	}
 }
 
@@ -141,7 +138,7 @@ func CreateFragment(props Properties, children Children) *fiber {
 //		)
 //	}
 func CreateScreenElement(render RenderToScreen, props Properties, children Children) *fiber {
-	// debug.Spew("CreateScreenElement", render)
+	// debug.Log("CreateScreenElement", render)
 	return &fiber{
 		componentType:  screenComponent,
 		renderToScreen: &render,

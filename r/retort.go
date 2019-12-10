@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"sync"
+	"runtime/debug"
 	"time"
 
 	"github.com/gdamore/tcell/encoding"
-	"retort.dev/debug"
+	d "retort.dev/debug"
 	"retort.dev/r/internal/quadtree"
 )
 
@@ -36,19 +36,13 @@ type RetortConfiguration struct {
 	// this is useful for automated testing
 	UseSimulationScreen bool
 
-	// UseDebugger to show a debug overlay with output from
-	// the retort.dev/debug#Log function
+	// UseDebugger to show a d overlay with output from
+	// the retort.dev/d#Log function
 	UseDebugger bool
 
 	// DisableMouse to prevent Mouse Events from being created
 	DisableMouse bool
 }
-
-var setStateChan chan ActionCreator
-
-var quitChan chan struct{}
-
-var c *RetortConfiguration = &RetortConfiguration{}
 
 // Retort is called with your root Component and any optional
 // configuration to begin running retort.
@@ -171,6 +165,18 @@ func Retort(root Element, config RetortConfiguration) {
 
 		var droppedFrames int
 
+		defer func() {
+
+			if false {
+				// TODO: wrap this is some config denoting prod mode
+				if r := recover(); r != nil {
+					d.Log("Panic", r)
+					debug.PrintStack()
+					close(quitChan)
+				}
+			}
+		}()
+
 	workloop:
 		for {
 			select {
@@ -210,7 +216,7 @@ func Retort(root Element, config RetortConfiguration) {
 				if r.nextUnitOfWork != nil && !shouldYield {
 					start := time.Now()
 					r.nextUnitOfWork = r.performWork(r.nextUnitOfWork)
-					debug.Spew("performWork: ", time.Since(start))
+					d.Log("performWork: ", time.Since(start))
 
 					// yield with time to render
 					if time.Since(deadline) > 100*time.Nanosecond {
@@ -221,7 +227,7 @@ func Retort(root Element, config RetortConfiguration) {
 				if r.nextUnitOfWork == nil && r.wipRoot != nil {
 					start := time.Now()
 					r.commitRoot()
-					debug.Spew("commitRoot: ", time.Since(start))
+					d.Log("commitRoot: ", time.Since(start))
 					shouldYield = false
 				}
 
@@ -286,9 +292,6 @@ func (r *retort) performWork(f *fiber) *fiber {
 	return nil
 }
 
-var hookFiber *fiber
-var hookFiberLock = &sync.Mutex{}
-
 // [ Components ]---------------------------------------------------------------
 
 func (r *retort) updateComponent(f *fiber) {
@@ -307,7 +310,7 @@ func (r *retort) updateComponent(f *fiber) {
 		r.updateScreenComponent(f)
 	}
 
-	// debug.Spew("updateComponent", f)
+	// d.Log("updateComponent", f)
 	hookFiberLock.Lock()
 	hookFiber = nil
 	hookFiberLock.Unlock()
@@ -330,7 +333,7 @@ func (r *retort) updateElementComponent(f *fiber) {
 	r.wipFiber.hooks = nil
 
 	children := f.component(f.Properties)
-	// debug.Spew("updateElementComponent children", children)
+	// d.Log("updateElementComponent children", children)
 	r.reconcileChildren(f, []*fiber{children})
 }
 
@@ -374,8 +377,6 @@ func (r *retort) updateScreenComponent(f *fiber) {
 	).(Children)
 
 	r.reconcileChildren(f, children)
-	// debug.Spew("updateScreenComponent", f)
-
 }
 
 // [ Children ]-----------------------------------------------------------------

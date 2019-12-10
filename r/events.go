@@ -71,7 +71,7 @@ func (r *retort) handleEvents() {
 		case *tcell.EventTime:
 		default:
 			if ev != nil {
-				// debug.Spew("Unhandled Event", ev)
+				// debug.Log("Unhandled Event", ev)
 			}
 		}
 

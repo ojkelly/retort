@@ -5,7 +5,7 @@ import (
 
 	"retort.dev/component/box"
 	"retort.dev/component/text"
-	"retort.dev/example"
+	"retort.dev/example/cmd"
 	"retort.dev/r"
 )
 
@@ -68,7 +68,7 @@ func main() {
 					},
 				),
 				r.CreateElement(
-					example.ClickableBox,
+					cmd.ClickableBox,
 					r.Properties{
 						box.Properties{
 							FlexGrow:   1,
@@ -82,7 +82,7 @@ func main() {
 					nil,
 				),
 				r.CreateElement(
-					example.ClickableBox,
+					cmd.ClickableBox,
 					r.Properties{
 						box.Properties{
 							FlexGrow:   1,
@@ -96,7 +96,7 @@ func main() {
 					nil,
 				),
 				r.CreateElement(
-					example.EffectExampleBox,
+					cmd.EffectExampleBox,
 					r.Properties{
 						box.Properties{
 							FlexGrow:   1,

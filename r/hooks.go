@@ -4,20 +4,23 @@ import (
 	"sync"
 )
 
-var hookIndex int
-
+// hook is a struct containing the fields needed for all core hooks.
+// The hookTag determines which fields are in use.
 type hook struct {
 	tag   hookTag
 	mutex *sync.Mutex
 
-	// State
+	// UseState
 	state State
 	queue []Action
 
-	// Effect
+	// UseEffect
 	deps   EffectDependencies
 	effect Effect
 	cancel EffectCancel
+
+	// UseContext
+	context *Context
 }
 
 type hookTag int
@@ -41,5 +44,7 @@ func (h *hook) Clone() *hook {
 		deps:   h.deps,
 		effect: h.effect,
 		cancel: h.cancel,
+
+		context: h.context,
 	}
 }

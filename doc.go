@@ -30,7 +30,7 @@ UseQuit: use this to exit the application.
 Why
 
 As stated by the inspiration for this package "Declarative views make your code
-more predictable and easier to debug.Spew". The original author (Owen Kelly) has
+more predictable and easier to debug.Log". The original author (Owen Kelly) has
 years of experience building complex websites with React, and wanted a similar
 reactive/declarative tool for terminal user interfaces in golang.
 

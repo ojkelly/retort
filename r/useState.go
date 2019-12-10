@@ -62,7 +62,7 @@ type (
 //    ).(MovingBoxState)
 //
 //    mouseEventHandler := func(e *tcell.EventMouse) {
-//      debug.Spew("mouseEventHandler", e, state)
+//      debug.Log("mouseEventHandler", e, state)
 //      color := tcell.ColorGreen
 //      if state.Color == tcell.ColorGreen {
 //        color = tcell.ColorBlue
@@ -73,7 +73,7 @@ type (
 //      }
 //
 //      setState(func(s r.State) r.State {
-//        debug.Spew("mouseEventHandler update state", e, state)
+//        debug.Log("mouseEventHandler update state", e, state)
 //
 //        return r.State{MovingBoxState{
 //          Color: color,

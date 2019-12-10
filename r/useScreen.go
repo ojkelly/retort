@@ -8,10 +8,6 @@ import (
 	"github.com/gdamore/tcell/encoding"
 )
 
-var useSimulationScreen bool
-var useScreenInstance tcell.Screen
-var hasScreenInstance bool
-
 // UseScreen returns a tcell.Screen allowing you to read and
 // interact with the Screen directly.
 //

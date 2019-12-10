@@ -38,7 +38,7 @@ type fiber struct {
 	// Its different to the boxLayout that may be passed around in props
 	boxLayout BoxLayout
 
-	focus bool
+	// focus bool
 }
 
 func (f *fiber) Clone() (newFiber *fiber) {

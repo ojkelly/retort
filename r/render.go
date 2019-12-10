@@ -35,7 +35,7 @@ func (r *retort) commitRoot() {
 	r.hasChangesToRender = false
 
 	hookFiber = nil
-	debug.Spew("committed root")
+	debug.Log("committed root")
 }
 
 func (r *retort) commitWork(f *fiber) {
@@ -50,7 +50,7 @@ func (r *retort) commitWork(f *fiber) {
 	switch f.effect {
 	case fiberEffectNothing:
 	case fiberEffectPlacement:
-		// debug.Spew("fiberEffectPlacement", f)
+		// debug.Log("fiberEffectPlacement", f)
 		// TODO: extract all renderToScreen's and execute them in ZIndex order
 		// lowest to highest this should allow layered things
 		// for _, el := range f.elements {

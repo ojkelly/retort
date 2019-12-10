@@ -1,51 +1,140 @@
 package r
 
+import (
+	"sync"
+)
+
 type Context struct {
-	state State
+	defaultState State
+}
+
+func (c *Context) SetState(s State) SetState {
+	hookFiberLock.Lock()
+
+	if hookFiber == nil {
+		panic("UseContext was not called inside a Component.")
+	}
+	var oldHook *hook
+
+	if hookFiber != nil &&
+		hookFiber.alternate != nil &&
+		hookFiber.alternate.hooks != nil &&
+		len(hookFiber.alternate.hooks) > hookIndex &&
+		hookFiber.alternate.hooks[hookIndex] != nil {
+		oldHook = hookFiber.alternate.hooks[hookIndex]
+	}
+
+	var h *hook
+	if oldHook != nil {
+		h = oldHook
+		h.state = s
+	} else {
+		h = &hook{
+			tag:     hookTagContext,
+			mutex:   &sync.Mutex{},
+			state:   s,
+			context: c,
+		}
+	}
+
+	if hookFiber != nil {
+		hookFiber.hooks = append(hookFiber.hooks, h)
+		hookIndex++
+	}
+
+	hookFiberLock.Unlock()
+
+	return func(a Action) {
+		setStateChan <- ActionCreator{
+			h: h,
+			a: a,
+		}
+	}
 }
 
 // CreateContext allows you to create a Context that can be used with UseContext
 // It must be called from outside your Component.
-func CreateContext(initial State) Context {
+func CreateContext(initial State) *Context {
 	if hookFiber != nil {
 		panic("CreateContext was called inside a Component.")
 	}
 
-	context := Context{
-		state: initial,
+	context := &Context{
+		defaultState: initial,
 	}
+
 	return context
 }
 
 // UseContext lets you subscribe to changes of Context without nesting.
-func UseContext(c Context) Properties {
+func UseContext(c *Context) State {
 	hookFiberLock.Lock()
 	// Walk the tree up via parents, and stop when we find a Provider
 	// that matches our Context
+	if hookFiber == nil {
+		panic("UseContext was not called inside a Component.")
+	}
 
-	// var oldHook *hook
+	state := findContext(c, hookFiber)
 
-	// if hookFiber != nil &&
-	// 	hookFiber.alternate != nil &&
-	// 	hookFiber.alternate.hooks != nil &&
-	// 	len(hookFiber.alternate.hooks) > hookIndex &&
-	// 	hookFiber.alternate.hooks[hookIndex] != nil {
-	// 	oldHook = hookFiber.alternate.hooks[hookIndex]
-	// }
+	var oldHook *hook
 
-	// var h *hook
-	// if oldHook != nil {
-	// 	h = oldHook
-	// } else {
-	// 	h = &hook{
-	// 		tag:   hookTagContext,
-	// 		mutex: &sync.Mutex{},
-	// 		state: initial,
-	// 	}
-	// }
-	// context := Context{
-	// 	f: hookFiber,
-	// }
+	if hookFiber != nil &&
+		hookFiber.alternate != nil &&
+		hookFiber.alternate.hooks != nil &&
+		len(hookFiber.alternate.hooks) > hookIndex &&
+		hookFiber.alternate.hooks[hookIndex] != nil {
+		oldHook = hookFiber.alternate.hooks[hookIndex]
+	}
+
+	var h *hook
+	if oldHook != nil {
+		h = oldHook
+		h.state = state
+	} else {
+		h = &hook{
+			tag:   hookTagState,
+			mutex: &sync.Mutex{},
+			state: state,
+		}
+	}
+
+	if hookFiber != nil {
+		hookFiber.hooks = append(hookFiber.hooks, h)
+		hookIndex++
+	}
+	// debug.Spew("useContext", h, state)
 	hookFiberLock.Unlock()
-	return Properties{}
+	return state
+}
+
+func findContext(c *Context, f *fiber) State {
+	if f == nil {
+		return nil
+	}
+
+	foundContext := false
+	var matchingHook *hook
+
+	for _, h := range f.hooks {
+		if h == nil {
+			continue
+		}
+		if h.tag == hookTagContext && h.context == c {
+			foundContext = true
+			matchingHook = h
+		}
+	}
+
+	if !foundContext || matchingHook == nil {
+		if f.parent == nil {
+			return nil
+		}
+		return findContext(c, f.parent)
+	}
+	if matchingHook == nil || len(matchingHook.state) != 1 {
+		return nil
+	}
+
+	return matchingHook.state
 }
