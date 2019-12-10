@@ -20,10 +20,8 @@ func Menu(p r.Properties) r.Element {
 	tc := r.UseContext(theme.Context)
 
 	t := tc.GetState(
-		box.Properties{},
-	).(box.Properties)
-
-	boxProps := t
+		theme.Colors{},
+	).(theme.Colors)
 
 	onClick := func(
 		isPrimary,
@@ -36,11 +34,19 @@ func Menu(p r.Properties) r.Element {
 		return func() {}
 	}
 
-	boxProps.Title.Value = "Hacker News"
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
-			boxProps,
+			box.Properties{
+				Foreground: t.Foreground,
+				Border: box.Border{
+					Style:      box.BorderStyleSingle,
+					Foreground: t.Border,
+				},
+				Title: box.Label{
+					Value: "Hacker News",
+				},
+			},
 			onClick,
 		},
 		nil,
