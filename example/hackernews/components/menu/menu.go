@@ -1,8 +1,11 @@
 package menu
 
 import (
+	"fmt"
+
 	"github.com/gdamore/tcell"
 	"retort.dev/component/box"
+	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
 )
@@ -12,6 +15,7 @@ type Properties struct {
 }
 
 func Menu(p r.Properties) r.Element {
+	title := "Top Stories"
 	props := p.GetProperty(
 		Properties{},
 		"Menu requires menu.Properties",
@@ -34,6 +38,29 @@ func Menu(p r.Properties) r.Element {
 		return func() {}
 	}
 
+	stories := hn.UseTopStories()
+
+	var items r.Children
+	if stories.Data != nil &&
+		len(stories.Data) > 0 {
+
+		for _, id := range stories.Data {
+			items = append(items, r.CreateElement(
+				MenuItem,
+				r.Properties{
+					MenuItemProps{
+						Id: id,
+					},
+				},
+				nil,
+			))
+		}
+	}
+
+	if stories.Loading {
+		title = fmt.Sprintf("%s %s", title, "[ Loading ]")
+	}
+
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
@@ -44,11 +71,18 @@ func Menu(p r.Properties) r.Element {
 					Foreground: t.Border,
 				},
 				Title: box.Label{
-					Value: "Hacker News",
+					Value: title,
 				},
+				Footer: box.Label{
+					Value: "Hacker News",
+					Wrap:  box.LabelWrapSquareBracket,
+				},
+				FlexDirection: box.FlexDirectionColumn,
+				Overflow:      box.OverflowScrollX,
+				MinHeight:     9,
 			},
 			onClick,
 		},
-		nil,
+		items,
 	)
 }

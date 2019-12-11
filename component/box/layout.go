@@ -4,6 +4,8 @@ import (
 	"math"
 
 	"github.com/gdamore/tcell"
+	"retort.dev/debug"
+	"retort.dev/intmath"
 	"retort.dev/r"
 )
 
@@ -67,7 +69,7 @@ func calculateBoxLayout(
 
 	// Calculate padding box
 	innerBoxLayout.Y = innerBoxLayout.Y + boxProps.Padding.Top
-	innerBoxLayout.Columns = innerBoxLayout.Columns - boxProps.Padding.Right - 10
+	innerBoxLayout.Columns = innerBoxLayout.Columns - boxProps.Padding.Right
 	innerBoxLayout.Rows = innerBoxLayout.Rows - boxProps.Padding.Bottom
 	innerBoxLayout.X = innerBoxLayout.X + boxProps.Padding.Left
 
@@ -79,7 +81,7 @@ func calculateBoxLayout(
 
 		innerBoxLayout.X = innerBoxLayout.X + 1
 		innerBoxLayout.Y = innerBoxLayout.Y + 1
-		innerBoxLayout.Rows = innerBoxLayout.Rows - 4
+		innerBoxLayout.Rows = innerBoxLayout.Rows - 1
 		innerBoxLayout.Columns = innerBoxLayout.Columns - 2
 	}
 
@@ -199,6 +201,13 @@ func calculateBoxLayoutForChildren(
 			columns = 0
 		}
 
+		if props.MinHeight != 0 {
+			rows = intmath.Min(rows, props.MinHeight)
+		}
+		if props.MinWidth != 0 {
+			columns = intmath.Min(columns, props.MinWidth)
+		}
+
 		boxLayout := r.BoxLayout{
 			X:       x,
 			Y:       y,
@@ -218,8 +227,14 @@ func calculateBoxLayoutForChildren(
 		case FlexDirectionColumnReverse:
 			y = y + rows
 		}
-
+		debug.Log("rows", rows, props.MinHeight)
 		el.Properties = r.ReplaceProps(el.Properties, boxLayout)
 	}
 	return children
 }
+
+// calculateSizeOfChildren recurses down the tree until it finds
+// a single of multiple boxes, and calculates their size
+// func calculateSizeOfChildren(el r.Element) r.BoxLayout {
+
+// }

@@ -214,9 +214,9 @@ func Retort(root Element, config RetortConfiguration) {
 					workTick.Stop()
 				}
 				if r.nextUnitOfWork != nil && !shouldYield {
-					start := time.Now()
+					// start := time.Now()
 					r.nextUnitOfWork = r.performWork(r.nextUnitOfWork)
-					d.Log("performWork: ", time.Since(start))
+					// d.Log("performWork: ", time.Since(start))
 
 					// yield with time to render
 					if time.Since(deadline) > 100*time.Nanosecond {
@@ -416,8 +416,8 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 			f.dirty = true
 			newFiber = &fiber{
 				dirty:          true,
-				componentType:  oldFiber.componentType,
-				component:      oldFiber.component,
+				componentType:  element.componentType,
+				component:      element.component,
 				Properties:     AddPropsIfNone(element.Properties, boxLayout),
 				parent:         f,
 				alternate:      oldFiber,

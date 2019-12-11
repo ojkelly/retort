@@ -23,15 +23,22 @@ func Theme(p r.Properties) r.Element {
 		"Theme requires Properties",
 	).(Properties)
 
-	state := Colors{}
+	color := Colors{}
 	switch props.Color {
 	case Orange:
-		state = orange
+		color = orange
 	case White:
-		state = white
+		color = white
 	}
 
-	Context.SetState(r.State{state})
+	// TODO: double check this
+	s, _ := r.UseState(r.State{color})
+
+	state := s.GetState(
+		Colors{},
+	).(Colors)
+
+	Context.Mount(r.State{state})
 
 	return r.CreateFragment(children)
 }

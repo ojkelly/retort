@@ -5,6 +5,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	runewidth "github.com/mattn/go-runewidth"
+	"retort.dev/intmath"
 	"retort.dev/r"
 )
 
@@ -78,10 +79,11 @@ func breakText(
 		if len(word)+2 > colsRemaining {
 			// Can we break the word?
 			if props.WordBreak == BreakAll {
+				lengthToSplit := intmath.Min(len(word), colsRemaining-1)
 				// TODO: this isn't great, and could be greatly improved
-				wordPart := word[:colsRemaining] + "-"
+				wordPart := word[:lengthToSplit] + "-"
 				line = line + wordPart
-				word = word[colsRemaining:]
+				word = word[lengthToSplit:]
 			}
 
 			// Save this line
@@ -99,6 +101,10 @@ func breakText(
 			colsRemaining = 0
 		}
 	}
+
+	// TODO: there's probably a better way
+	// save last line
+	lines = append(lines, line)
 
 	return
 }

@@ -4,6 +4,7 @@ import (
 	"retort.dev/component/box"
 	"retort.dev/r"
 
+	"retort.dev/example/hackernews/components/cache"
 	"retort.dev/example/hackernews/components/menu"
 	"retort.dev/example/hackernews/components/story"
 	"retort.dev/example/hackernews/components/theme"
@@ -42,34 +43,44 @@ func App(p r.Properties) r.Element {
 		},
 		r.Children{
 			r.CreateElement(
-				box.Box,
-				r.Properties{
-					box.Properties{
-						Width:  100,
-						Height: 100,
-					},
-				},
+				cache.Cache,
+				r.Properties{},
 				r.Children{
+					// Wrapper
 					r.CreateElement(
-						menu.Menu,
+						box.Box,
 						r.Properties{
 							box.Properties{
-								FlexGrow: 1,
-							},
-							menu.Properties{
-								SetTheme: setTheme,
+								Width:  100,
+								Height: 100,
 							},
 						},
-						nil,
-					),
-					r.CreateElement(
-						story.Story,
-						r.Properties{
-							box.Properties{
-								FlexGrow: 3,
-							},
+						r.Children{
+							// Menu
+							r.CreateElement(
+								menu.Menu,
+								r.Properties{
+									box.Properties{
+										FlexGrow: 1,
+										Width:    100,
+									},
+									menu.Properties{
+										SetTheme: setTheme,
+									},
+								},
+								nil,
+							),
+							// Story view
+							r.CreateElement(
+								story.Story,
+								r.Properties{
+									box.Properties{
+										FlexGrow: 3,
+									},
+								},
+								nil,
+							),
 						},
-						nil,
 					),
 				},
 			),

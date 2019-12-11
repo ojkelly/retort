@@ -6,7 +6,7 @@ watch:
 # Build the example app
 dev:
 	rm debug.log || true
-	go run example/cmd/main.go
+	go run example/hackernews/main.go
 
 # Build the hn app
 hn:

@@ -8,7 +8,7 @@ type Context struct {
 	defaultState State
 }
 
-func (c *Context) SetState(s State) SetState {
+func (c *Context) Mount(state State) {
 	hookFiberLock.Lock()
 
 	if hookFiber == nil {
@@ -27,12 +27,12 @@ func (c *Context) SetState(s State) SetState {
 	var h *hook
 	if oldHook != nil {
 		h = oldHook
-		h.state = s
+		// h.state = s ??
 	} else {
 		h = &hook{
 			tag:     hookTagContext,
 			mutex:   &sync.Mutex{},
-			state:   s,
+			state:   state,
 			context: c,
 		}
 	}
@@ -43,13 +43,6 @@ func (c *Context) SetState(s State) SetState {
 	}
 
 	hookFiberLock.Unlock()
-
-	return func(a Action) {
-		setStateChan <- ActionCreator{
-			h: h,
-			a: a,
-		}
-	}
 }
 
 // CreateContext allows you to create a Context that can be used with UseContext
@@ -96,6 +89,15 @@ func UseContext(c *Context) State {
 			tag:   hookTagState,
 			mutex: &sync.Mutex{},
 			state: state,
+		}
+	}
+
+	var actions []Action
+	if oldHook != nil {
+		actions = oldHook.queue
+
+		for _, action := range actions {
+			h.state = action(h.state)
 		}
 	}
 

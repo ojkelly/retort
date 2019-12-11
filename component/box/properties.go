@@ -20,6 +20,7 @@ type Properties struct {
 	ZIndex int
 
 	// Flex Box
+	// Display Display
 
 	// The flex-direction CSS property sets how flex items are placed in the flex
 	// container defining the main axis and the direction (normal or reversed).
@@ -67,6 +68,11 @@ type Properties struct {
 	Foreground tcell.Color
 
 	Overflow Overflow
+
+	MinHeight int
+	MinWidth  int
+
+	// TODO: maybe expand labels to allow them to be top/bottom left, center, right
 
 	// Title is a Label placed on the top border
 	Title Label
@@ -116,6 +122,15 @@ const (
 )
 
 // [ FlexBox Types ]------------------------------------------------------------
+
+// type Display int
+
+// const (
+// 	// DisplayFlex uses the limited flexbox implementation
+// 	DisplayFlex FlexDirection = iota
+// 	// DisplayBox means each item needs to set its own width and height
+// 	DisplayBox
+// )
 
 type FlexDirection int
 

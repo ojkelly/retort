@@ -67,6 +67,19 @@ func render(
 			borderStyle,
 		)
 	}
+	if props.Footer.Value != "" {
+		renderLabel(
+			s,
+			props.Footer,
+			r.BoxLayout{
+				X:       layout.X + 2, // Bump it over 1 for the corner, and 1 for style
+				Y:       layout.Y + layout.Rows,
+				Rows:    1,
+				Columns: layout.Columns,
+			},
+			borderStyle,
+		)
+	}
 }
 
 func renderLabel(

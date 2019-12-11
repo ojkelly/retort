@@ -1,5 +1,11 @@
 package r
 
+import (
+	"reflect"
+
+	"retort.dev/debug"
+)
+
 type (
 	// Effect is the function type you pass to UseEffect.
 	//
@@ -172,25 +178,25 @@ func hasDepsChanged(
 	prevDeps,
 	nextDeps EffectDependencies,
 ) (changed bool) {
-
-	// TODO cleanup
-	// if len(prevDeps) != len(nextDeps) {
-	// 	changed = true
-	// }
-	// if len(prevDeps) == 0 {
-	// 	changed = true
-	// }
-	// if len(nextDeps) == 0 {
-	// 	changed = true
-	// }
-
-	// Check the slices have the same contents, in the same order
-	for i, pd := range prevDeps {
-		if nextDeps[i] != pd {
-			changed = true
-		}
+	if !reflect.DeepEqual(prevDeps, nextDeps) {
+		changed = true
 	}
 
+	if len(prevDeps) == 0 {
+		changed = false
+	}
+	if len(nextDeps) == 0 {
+		changed = false
+	}
+
+	// Check the slices have the same contents, in the same order
+	// for i, pd := range prevDeps {
+	// 	if nextDeps[i] != pd {
+	// 		changed = true
+	// 	}
+	// }
+
+	debug.Log("hasDepsChanged ", changed)
 	return
 }
 

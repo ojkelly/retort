@@ -5,6 +5,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	"retort.dev/component/box"
+	"retort.dev/intmath"
 	"retort.dev/r"
 )
 
@@ -106,8 +107,8 @@ func Text(p r.Properties) r.Element {
 				if state.OffsetX < 3 {
 					offsetX = state.OffsetX + offsetXDelta
 				} else {
-					offsetX = min(
-						intAbs(state.OffsetX+offsetXDelta),
+					offsetX = intmath.Min(
+						intmath.Abs(state.OffsetX+offsetXDelta),
 						int(float64(parentBoxLayout.Columns)/0.2),
 					)
 				}
@@ -118,8 +119,8 @@ func Text(p r.Properties) r.Element {
 				if offsetY < 3 {
 					offsetY = state.OffsetY + offsetYDelta
 				} else {
-					offsetY = min(
-						intAbs(state.OffsetY+offsetYDelta),
+					offsetY = intmath.Min(
+						intmath.Abs(state.OffsetY+offsetYDelta),
 						int(float64(parentBoxLayout.Rows)/0.2),
 					)
 				}
