@@ -1,7 +1,7 @@
 package app
 
 import (
-	"retort.dev/component/box"
+	"retort.dev/components/box"
 	"retort.dev/r"
 
 	"retort.dev/example/hackernews/components/cache"
@@ -61,8 +61,7 @@ func App(p r.Properties) r.Element {
 								menu.Menu,
 								r.Properties{
 									box.Properties{
-										FlexGrow: 1,
-										Width:    100,
+										Width: 100,
 									},
 									menu.Properties{
 										SetTheme: setTheme,
@@ -74,9 +73,7 @@ func App(p r.Properties) r.Element {
 							r.CreateElement(
 								story.Story,
 								r.Properties{
-									box.Properties{
-										FlexGrow: 3,
-									},
+									box.Properties{},
 								},
 								nil,
 							),

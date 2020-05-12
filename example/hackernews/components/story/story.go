@@ -1,7 +1,7 @@
 package story
 
 import (
-	"retort.dev/component/box"
+	"retort.dev/components/box"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
 )

@@ -5,13 +5,13 @@ import (
 	"retort.dev/r"
 )
 
-func calculateBoxLayout(
+func calculateBlockLayout(
 	screen tcell.Screen,
-	parentBoxLayout r.BoxLayout,
+	parentBlockLayout r.BlockLayout,
 	textProps Properties,
 ) (
-	boxLayout r.BoxLayout,
+	blockLayout r.BlockLayout,
 ) {
-	boxLayout = parentBoxLayout
+	blockLayout = parentBlockLayout
 	return
 }

@@ -12,7 +12,7 @@ import (
 func renderText(
 	s tcell.Screen,
 	props Properties,
-	layout r.BoxLayout,
+	layout r.BlockLayout,
 	offsetX, offsetY int,
 ) {
 
@@ -50,7 +50,7 @@ func renderText(
 func breakText(
 	text string,
 	props Properties,
-	layout r.BoxLayout,
+	layout r.BlockLayout,
 ) (lines []string) {
 	width := layout.Columns
 

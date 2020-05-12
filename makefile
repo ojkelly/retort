@@ -3,10 +3,14 @@
 watch:
 	watchman-make -p '**/*.go' -t dev
 
-# Build the example app
 dev:
 	rm debug.log || true
 	go run example/hackernews/main.go
+
+# Build the example app
+demo:
+	go run example/cmd/main.go
+
 
 # Build the hn app
 hn:

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/component/box"
+	"retort.dev/components/box"
 	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
@@ -77,9 +77,8 @@ func Menu(p r.Properties) r.Element {
 					Value: "Hacker News",
 					Wrap:  box.LabelWrapSquareBracket,
 				},
-				FlexDirection: box.FlexDirectionColumn,
-				Overflow:      box.OverflowScrollX,
-				MinHeight:     9,
+				Overflow:  box.OverflowScrollX,
+				MinHeight: 9,
 			},
 			onClick,
 		},

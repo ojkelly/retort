@@ -74,7 +74,6 @@ type (
 //      component.Box,
 //      r.Properties{
 //          component.BoxProps{
-//            FlexGrow:   1,
 //            Border: component.Border{
 //              Style:      component.BorderStyleSingle,
 //              Foreground: tcell.ColorWhite,
@@ -128,22 +127,36 @@ func CreateFragment(children Children) *fiber {
 // This walks the tree and finds ScreenElements and calls their
 // RenderToScreen function, passing in the current Screen.
 //
-// RenderToScreen needs to return a BoxLayout, which is used among
+// RenderToScreen needs to return a BlockLayout, which is used among
 // other things to direct Mouse Events to the right Component.
 //
 //	func Box(p r.Properties) r.Element {
 //		return r.CreateScreenElement(
-//			func(s tcell.Screen) r.BoxLayout {
-//				return boxLayout
+//			func(s tcell.Screen) r.BlockLayout {
+//				return BlockLayout
 //			},
 //			nil,
 //		)
 //	}
-func CreateScreenElement(render RenderToScreen, props Properties, children Children) *fiber {
+func CreateScreenElement(
+	calculateLayout CalculateLayout,
+	render RenderToScreen,
+	props Properties,
+	children Children,
+) *fiber {
 	// debug.Log("CreateScreenElement", render)
+
+	// TODO: maybe this should be multi-step
+	// ie pass in some functions
+	// - calculateLayout BlockLayout
+	// 		- this is called more than once
+	//		-	if the inputs are the same, or the result is the same as before,
+	//		-	then it should be done
+	// - renderToScreen(BlockLayout)
 	return &fiber{
-		componentType:  screenComponent,
-		renderToScreen: &render,
+		componentType:   screenComponent,
+		calculateLayout: &calculateLayout,
+		renderToScreen:  &render,
 		Properties: append(
 			props,
 			children,
@@ -186,7 +199,7 @@ func checkPropTypesAreUnique(props Properties) bool {
 //      component.Box,
 //      r.Properties{
 //          component.BoxProps{
-//            FlexGrow:   1,
+
 //            Border: component.Border{
 //              Style:      component.BorderStyleSingle,
 //              Foreground: tcell.ColorWhite,
@@ -224,7 +237,6 @@ func (props Properties) GetProperty(
 //  func Wrapper(p r.Properties) r.Element {
 //    boxProps := p.GetOptionalProperty(
 //      component.BoxProps{
-//        FlexGrow:   1,
 //        Border: component.Border{
 //          Style:      component.BorderStyleSingle,
 //          Foreground: tcell.ColorWhite,

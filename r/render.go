@@ -8,8 +8,12 @@ import (
 // RenderToScreen is the callback passed to create a Screen Element
 type RenderToScreen func(
 	s tcell.Screen,
-) BoxLayout
+	blockLayout BlockLayout,
+)
 
+// commitRoot processes a tree root, and commits the results
+// It's used to process updates for a fiber render, and is called when the
+// main workloop has run out of tasks
 func (r *retort) commitRoot() {
 	screen := UseScreen()
 
@@ -17,7 +21,14 @@ func (r *retort) commitRoot() {
 		r.commitWork(deletion)
 	}
 
+	// w, h := screen.Size()
+
+	r.calculateLayout(r.wipRoot)
+
 	// Draw
+	// TODO: conver this to a 2 step, first create a DisplayList (a list of commands for what to draw)
+	// then optmise the list, by sorting by z-index, and removing commands that are occuluded
+	// then run the commands sequentially
 	r.commitWork(r.wipRoot)
 
 	screen.Show()
@@ -38,6 +49,7 @@ func (r *retort) commitRoot() {
 	debug.Log("committed root")
 }
 
+// commitWork walks the tree and commits any fiber updates
 func (r *retort) commitWork(f *fiber) {
 	if f == nil {
 		return
@@ -66,7 +78,7 @@ func (r *retort) commitWork(f *fiber) {
 		// so when it's called we can clear the screen it used to be in before
 		// redrawing
 		render := *f.renderToScreen
-		f.boxLayout = render(screen)
+		render(screen, f.InnerBlockLayout)
 		// }
 	case fiberEffectUpdate:
 		// cancelEffects(f)
@@ -83,7 +95,7 @@ func (r *retort) commitWork(f *fiber) {
 		// so when it's called we can clear the screen it used to be in before
 		// redrawing
 		render := *f.renderToScreen
-		f.boxLayout = render(screen)
+		render(screen, f.InnerBlockLayout)
 		// }
 	case fiberEffectDelete:
 	}

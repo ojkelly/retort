@@ -19,31 +19,6 @@ type Properties struct {
 	// on top.
 	ZIndex int
 
-	// Flex Box
-	// Display Display
-
-	// The flex-direction CSS property sets how flex items are placed in the flex
-	// container defining the main axis and the direction (normal or reversed).
-	FlexDirection FlexDirection
-
-	// The flex-basis CSS property sets the initial main size of a flex item.
-	FlexBasis FlexBasis
-
-	// The flex-grow CSS property sets the flex grow factor of a flex item main
-	// size. It specifies how much of the remaining space in the flex container
-	// should be assigned to the item (the flex grow factor).
-	FlexGrow int
-
-	// The flex-shrink CSS property sets the flex shrink factor of a flex item.
-	// If the size of all flex items is larger than the flex container, items
-	// shrink to fit according to flex-shrink.
-	FlexShrink int // TODO
-
-	// The flex-wrap CSS property sets whether flex items are forced onto one
-	// line or can wrap onto multiple lines. If wrapping is allowed, it sets the
-	// direction that lines are stacked.
-	FlexWrap FlexWrapOption
-
 	Align Align
 
 	// Content Box
@@ -60,6 +35,8 @@ type Properties struct {
 	// Padding Box
 	Padding Padding
 	Margin  Margin
+
+	Direction Direction
 
 	// Border
 	Border Border
@@ -97,6 +74,13 @@ type Margin struct {
 	Left   int
 }
 
+type Direction int
+
+const (
+	Vertical Direction = iota
+	Horizontal
+)
+
 type Border struct {
 	Style      BorderStyle
 	Background tcell.Color
@@ -119,43 +103,6 @@ const (
 	OverflowNone
 	OverflowScrollX
 	OverflowScrollY
-)
-
-// [ FlexBox Types ]------------------------------------------------------------
-
-// type Display int
-
-// const (
-// 	// DisplayFlex uses the limited flexbox implementation
-// 	DisplayFlex FlexDirection = iota
-// 	// DisplayBox means each item needs to set its own width and height
-// 	DisplayBox
-// )
-
-type FlexDirection int
-
-const (
-	FlexDirectionRow FlexDirection = iota
-	FlexDirectionRowReverse
-	FlexDirectionColumn
-	FlexDirectionColumnReverse
-)
-
-type FlexBasis int
-
-const (
-	FlexBasisFill FlexBasis = iota
-	FlexBasisMaxContent
-	FlexBasisMinContent
-	FlexBasisFitContent
-)
-
-type FlexWrapOption int
-
-const (
-	FlexWrapNone FlexWrapOption = iota
-	FlexWrap
-	FlexWrapReverse
 )
 
 type Align int

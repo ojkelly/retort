@@ -206,7 +206,7 @@ func (qt *Quadtree) Insert(pRect Bounds) {
 	// If total objects is greater than max objects and level is less than max levels
 	if (len(qt.Objects) > qt.MaxObjects) && (qt.Level < qt.MaxLevels) {
 		// split if we don't already have subnodes
-		if len(qt.Nodes) > 0 == false {
+		if len(qt.Nodes) > 0 {
 			qt.split()
 		}
 

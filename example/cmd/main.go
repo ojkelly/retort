@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/gdamore/tcell"
 
-	"retort.dev/component/box"
-	"retort.dev/component/text"
-	"retort.dev/example/cmd"
+	"retort.dev/components/box"
+	"retort.dev/components/text"
+	"retort.dev/example/components"
 	"retort.dev/r"
 )
 
@@ -35,8 +35,7 @@ func main() {
 					box.Box,
 					r.Properties{
 						box.Properties{
-							Foreground:    tcell.ColorBeige,
-							FlexDirection: box.FlexDirectionColumn,
+							Foreground: tcell.ColorBeige,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
@@ -68,10 +67,9 @@ func main() {
 					},
 				),
 				r.CreateElement(
-					cmd.ClickableBox,
+					components.ClickableBox,
 					r.Properties{
 						box.Properties{
-							FlexGrow:   1,
 							Foreground: tcell.ColorCadetBlue,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
@@ -82,10 +80,9 @@ func main() {
 					nil,
 				),
 				r.CreateElement(
-					cmd.ClickableBox,
+					components.ClickableBox,
 					r.Properties{
 						box.Properties{
-							FlexGrow:   1,
 							Foreground: tcell.ColorLawnGreen,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
@@ -96,10 +93,9 @@ func main() {
 					nil,
 				),
 				r.CreateElement(
-					cmd.EffectExampleBox,
+					components.EffectExampleBox,
 					r.Properties{
 						box.Properties{
-							FlexGrow:   1,
 							Foreground: tcell.ColorLightCyan,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,

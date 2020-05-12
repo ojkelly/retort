@@ -1,10 +1,10 @@
-package example
+package components
 
 import (
 	"time"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/component/box"
+	"retort.dev/components/box"
 	"retort.dev/r"
 )
 
@@ -15,12 +15,12 @@ type EffectExampleBoxState struct {
 func EffectExampleBox(p r.Properties) r.Element {
 	boxProps := p.GetProperty(
 		box.Properties{},
-		"Container requires ContainerProps",
+		"EffectExampleBox requires ContainerProps",
 	).(box.Properties)
 
 	children := p.GetProperty(
 		r.Children{},
-		"Container requires r.Children",
+		"EffectExampleBox requires r.Children",
 	).(r.Children)
 
 	s, setState := r.UseState(r.State{

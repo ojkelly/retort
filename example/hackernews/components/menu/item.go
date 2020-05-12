@@ -3,8 +3,8 @@ package menu
 import (
 	"fmt"
 
-	"retort.dev/component/box"
-	"retort.dev/component/text"
+	"retort.dev/components/box"
+	"retort.dev/components/text"
 	"retort.dev/debug"
 	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
@@ -37,8 +37,7 @@ func MenuItem(p r.Properties) r.Element {
 			Left:  1,
 			Right: 1,
 		},
-		MinHeight:     10,
-		FlexDirection: box.FlexDirectionColumn,
+		MinHeight: 10,
 		Border: box.Border{
 			Style:      box.BorderStyleSingle,
 			Foreground: t.Border,
@@ -87,9 +86,7 @@ func MenuItem(p r.Properties) r.Element {
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{
-						FlexGrow: 1,
-					},
+					box.Properties{},
 					text.Properties{
 						Value:      story.Title,
 						Foreground: t.Foreground,
@@ -101,9 +98,7 @@ func MenuItem(p r.Properties) r.Element {
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{
-						FlexGrow: 1,
-					},
+					box.Properties{},
 					text.Properties{
 						Value: fmt.Sprintf(
 							"Score: %d\nComments: %d",

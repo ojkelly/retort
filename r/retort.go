@@ -24,9 +24,9 @@ type retort struct {
 	hasChangesToRender bool
 	hasNewState        bool
 
-	rootBoxLayout BoxLayout
-	quadtree      quadtree.Quadtree
-	config        RetortConfiguration
+	rootBlockLayout BlockLayout
+	quadtree        quadtree.Quadtree
+	config          RetortConfiguration
 }
 
 // RetortConfiguration allows you to enable features your app
@@ -130,7 +130,7 @@ func Retort(root Element, config RetortConfiguration) {
 
 	r.parseRetortConfiguration()
 
-	r.rootBoxLayout = BoxLayout{
+	r.rootBlockLayout = BlockLayout{
 		X:       0,
 		Y:       0,
 		Columns: w + 1, // +1 to account for zero-indexing
@@ -139,7 +139,7 @@ func Retort(root Element, config RetortConfiguration) {
 	r.quadtree.Bounds.Width = w
 	r.quadtree.Bounds.Height = h
 
-	root.Properties = append(root.Properties, r.rootBoxLayout)
+	root.Properties = append(root.Properties, r.rootBlockLayout)
 
 	r.wipRoot = &fiber{
 		componentType: nothingComponent,
@@ -387,12 +387,12 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 	f.dirty = false
 
 	var oldFiber *fiber
-	var boxLayout BoxLayout
+	var blockLayout BlockLayout
 	if r.wipFiber != nil && r.wipFiber.alternate != nil {
 		oldFiber = r.wipFiber.alternate.child
 	}
 
-	boxLayout = f.Properties.GetOptionalProperty(BoxLayout{}).(BoxLayout)
+	blockLayout = f.Properties.GetOptionalProperty(BlockLayout{}).(BlockLayout)
 
 	var prevSibling *fiber
 
@@ -418,7 +418,7 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 				dirty:          true,
 				componentType:  element.componentType,
 				component:      element.component,
-				Properties:     AddPropsIfNone(element.Properties, boxLayout),
+				Properties:     AddPropsIfNone(element.Properties, blockLayout),
 				parent:         f,
 				alternate:      oldFiber,
 				effect:         fiberEffectUpdate,
@@ -432,7 +432,7 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 				dirty:          true,
 				componentType:  element.componentType,
 				component:      element.component,
-				Properties:     AddPropsIfNone(element.Properties, boxLayout),
+				Properties:     AddPropsIfNone(element.Properties, blockLayout),
 				parent:         f,
 				alternate:      nil,
 				effect:         fiberEffectPlacement,

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/component/box"
+	"retort.dev/components/box"
 	"retort.dev/intmath"
 	"retort.dev/r"
 )
@@ -30,11 +30,11 @@ func Text(p r.Properties) r.Element {
 		box.Properties{},
 	).(box.Properties)
 
-	// Get our BoxLayout
-	parentBoxLayout := p.GetProperty(
-		r.BoxLayout{},
-		"Text requires a parent BoxLayout.",
-	).(r.BoxLayout)
+	// Get our BlockLayout
+	parentBlockLayout := p.GetProperty(
+		r.BlockLayout{},
+		"Text requires a parent BlockLayout.",
+	).(r.BlockLayout)
 
 	// Get any children
 	children := p.GetOptionalProperty(
@@ -51,10 +51,10 @@ func Text(p r.Properties) r.Element {
 		boxState{},
 	).(boxState)
 
-	// Calculate the BoxLayout of this Text
-	boxLayout := calculateBoxLayout(
+	// Calculate the BlockLayout of this Text
+	BlockLayout := calculateBlockLayout(
 		screen,
-		parentBoxLayout,
+		parentBlockLayout,
 		textProps,
 	)
 
@@ -109,7 +109,7 @@ func Text(p r.Properties) r.Element {
 				} else {
 					offsetX = intmath.Min(
 						intmath.Abs(state.OffsetX+offsetXDelta),
-						int(float64(parentBoxLayout.Columns)/0.2),
+						int(float64(parentBlockLayout.Columns)/0.2),
 					)
 				}
 			}
@@ -121,7 +121,7 @@ func Text(p r.Properties) r.Element {
 				} else {
 					offsetY = intmath.Min(
 						intmath.Abs(state.OffsetY+offsetYDelta),
-						int(float64(parentBoxLayout.Rows)/0.2),
+						int(float64(parentBlockLayout.Rows)/0.2),
 					)
 				}
 			}
@@ -149,7 +149,15 @@ func Text(p r.Properties) r.Element {
 		},
 		r.Children{
 			r.CreateScreenElement(
-				func(s tcell.Screen) r.BoxLayout {
+				func(
+					s tcell.Screen,
+					stage r.CalculateLayoutStage,
+					parentBlockLayout r.BlockLayout,
+					childrenBlockLayouts *r.BlockLayouts,
+				) (r.BlockLayout, r.BlockLayout) {
+					return parentBlockLayout, parentBlockLayout
+				},
+				func(s tcell.Screen, blockLayout r.BlockLayout) {
 					if s == nil {
 						panic("Text can't render no screen")
 					}
@@ -163,11 +171,9 @@ func Text(p r.Properties) r.Element {
 					renderText(
 						s,
 						textProps,
-						boxLayout,
+						BlockLayout,
 						state.OffsetX, state.OffsetY,
 					)
-
-					return boxLayout
 				},
 				r.Properties{},
 				nil,

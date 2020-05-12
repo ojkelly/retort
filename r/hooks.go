@@ -33,6 +33,7 @@ const (
 	hookTagContext
 )
 
+// Clone safely makes a copy of a hook for use with fiber updates
 func (h *hook) Clone() *hook {
 	return &hook{
 		tag:   h.tag,
