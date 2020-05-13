@@ -19,7 +19,8 @@ func calculateBlockLayout(
 	) (
 		outerBlockLayout r.BlockLayout,
 		innerBlockLayout r.BlockLayout,
-		childrenBlockLayouts r.BlockLayouts) {
+		childrenBlockLayouts r.BlockLayouts,
+	) {
 		childrenBlockLayouts = children
 
 		switch stage {
@@ -239,6 +240,7 @@ func calculateBlockLayout(
 				case DirectionColumnReverse:
 					y = y + rows
 				}
+				debug.Spew("c xy", rows, columns, x, y, i)
 
 				blockLayout := r.BlockLayout{
 					X:       x,
@@ -260,7 +262,7 @@ func calculateBlockLayout(
 				}
 			}
 
-			debug.Spew("c", childrenBlockLayouts)
+			// debug.Spew("c", childrenBlockLayouts)
 			return
 		case r.CalculateLayoutStageFinal:
 

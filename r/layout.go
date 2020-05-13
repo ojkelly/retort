@@ -125,7 +125,7 @@ func (r *retort) reconcileQuadTree(f *fiber) {
 	r.reconcileQuadTree(f.sibling)
 }
 
-func (r *retort) calculateLayout(f *fiber) {
+func (r *retort) calculateLayout(f *fiber, inheritedBlockLayout BlockLayout) {
 	if f == nil {
 		return
 	}
@@ -133,7 +133,13 @@ func (r *retort) calculateLayout(f *fiber) {
 	screen := UseScreen()
 
 	// default own BlockLayout
-	parentBlockLayout := findParentLayout(f)
+	// parentBlockLayout := findParentLayout(f)
+
+	parentBlockLayout := inheritedBlockLayout
+
+	// ?
+	f.BlockLayout = parentBlockLayout
+	f.InnerBlockLayout = parentBlockLayout
 
 	if f.calculateLayout != nil {
 		// if parentFiber := f.parent; parentFiber != nil {
@@ -155,16 +161,22 @@ func (r *retort) calculateLayout(f *fiber) {
 		debug.Log("clac", blockLayout, innerBlockLayout)
 		f.BlockLayout = blockLayout
 		f.InnerBlockLayout = innerBlockLayout
+
+		parentBlockLayout = innerBlockLayout
 	}
 
 	// r.calculateLayout(f.child)
 	// r.calculateLayout(f.sibling)
+
+	r.calculateLayout(f.child, parentBlockLayout)
+	r.calculateLayout(f.sibling, parentBlockLayout)
 
 	if f.calculateLayout != nil {
 
 		children := f.Properties.GetOptionalProperty(
 			Children{},
 		).(Children)
+		debug.Log("children", children)
 
 		childrenBlockLayouts := []BlockLayout{}
 
@@ -184,7 +196,6 @@ func (r *retort) calculateLayout(f *fiber) {
 			f.InnerBlockLayout,
 			childrenBlockLayouts,
 		)
-
 		// Put the updated blockLayouts back onto the children
 		for i, c := range children {
 			if c == nil {
@@ -194,44 +205,45 @@ func (r *retort) calculateLayout(f *fiber) {
 			c.BlockLayout = childrenBlockLayouts[i]
 			c.InnerBlockLayout = childrenBlockLayouts[i]
 		}
+		// debug.Spew("CDCCCCC", children)
 
-		debug.Spew("BEFORE", f.Properties)
-		f.Properties = ReplaceProps(f.Properties, children)
+		// debug.Spew("BEFORE", f.Properties)
 		f.Properties = ReplaceProps(f.Properties, f.BlockLayout)
-		debug.Spew("AFTER", f.Properties)
+		f.Properties = ReplaceProps(f.Properties, children)
+		// debug.Spew("AFTER", f.Properties)
 
+		debug.Spew("end layout", f)
 	}
 
-	r.calculateLayout(f.child)
-	r.calculateLayout(f.sibling)
+	// r.calculateLayout(f.child, parentBlockLayout)
+	// r.calculateLayout(f.sibling, parentBlockLayout)
 
 	// debug.Spew("end of layout", f)
-	debug.Log("end layout", f.Properties, f.BlockLayout)
 }
 
-func findParentLayout(f *fiber) (parentBlockLayout BlockLayout) {
-	if f == nil {
-		// TODO: this shouldn't happen, it means we've lost the root block
-		return
-	}
+// func findParentLayout(f *fiber) (parentBlockLayout BlockLayout) {
+// 	if f == nil {
+// 		// TODO: this shouldn't happen, it means we've lost the root block
+// 		return
+// 	}
 
-	// Default to own layout
-	parentBlockLayout = f.BlockLayout
+// 	// Default to own layout
+// 	parentBlockLayout = f.BlockLayout
 
-	if parentFiber := f.parent; parentFiber != nil {
-		// If all four of these values are 0, we cannot render to it, so we
-		// will search higher to find a more valid block
-		if parentFiber.InnerBlockLayout.X != 0 &&
-			parentFiber.InnerBlockLayout.Y != 0 &&
-			parentFiber.InnerBlockLayout.Rows != 0 &&
-			parentFiber.InnerBlockLayout.Columns != 0 {
-			return parentFiber.InnerBlockLayout
-		}
-	}
+// 	if parentFiber := f.parent; parentFiber != nil {
+// 		// If all four of these values are 0, we cannot render to it, so we
+// 		// will search higher to find a more valid block
+// 		if parentFiber.InnerBlockLayout.X != 0 &&
+// 			parentFiber.InnerBlockLayout.Y != 0 &&
+// 			parentFiber.InnerBlockLayout.Rows != 0 &&
+// 			parentFiber.InnerBlockLayout.Columns != 0 {
+// 			return parentFiber.InnerBlockLayout
+// 		}
+// 	}
 
-	if f.parent != nil {
-		return findParentLayout(f.parent)
-	}
+// 	if f.parent != nil {
+// 		return findParentLayout(f.parent)
+// 	}
 
-	return
-}
+// 	return
+// }

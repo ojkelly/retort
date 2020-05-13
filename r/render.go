@@ -23,7 +23,7 @@ func (r *retort) commitRoot() {
 
 	// w, h := screen.Size()
 	// debug.Spew(r.wipRoot)
-	r.calculateLayout(r.wipRoot)
+	r.calculateLayout(r.wipRoot, r.wipRoot.InnerBlockLayout)
 
 	// Draw
 	// TODO: conver this to a 2 step, first create a DisplayList (a list of commands for what to draw)

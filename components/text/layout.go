@@ -13,10 +13,15 @@ func calculateBlockLayout(
 		s tcell.Screen,
 		stage r.CalculateLayoutStage,
 		parentBlockLayout r.BlockLayout,
+		children r.BlockLayouts,
+	) (
+		outerBlockLayout r.BlockLayout,
+		innerBlockLayout r.BlockLayout,
 		childrenBlockLayouts r.BlockLayouts,
-	) (outerBlockLayout r.BlockLayout, innerBlockLayout r.BlockLayout) {
+	) {
 		outerBlockLayout = parentBlockLayout
 		innerBlockLayout = parentBlockLayout
+		childrenBlockLayouts = children
 		return
 
 	}

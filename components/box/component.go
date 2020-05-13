@@ -41,7 +41,6 @@ func Box(p r.Properties) r.Element {
 	return r.CreateScreenElement(
 		calculateBlockLayout(boxProps),
 		func(s tcell.Screen, blockLayout r.BlockLayout) {
-			debug.Log("CreateScreenElement Box", blockLayout)
 			// debug.Spew(p)
 
 			if s == nil {
@@ -54,6 +53,7 @@ func Box(p r.Properties) r.Element {
 				panic("Box can't render on a zero size screen")
 			}
 
+			debug.Spew("CreateScreenElement Box", w, h, blockLayout)
 			render(
 				screen,
 				boxProps,
