@@ -4,7 +4,6 @@ import (
 	"github.com/gdamore/tcell"
 
 	"retort.dev/components/box"
-	"retort.dev/components/text"
 	"retort.dev/example/components"
 	"retort.dev/r"
 )
@@ -22,54 +21,89 @@ Amet est placerat in egestas erat imperdiet sed euismod. Eget felis eget nunc lo
 func main() {
 
 	r.Retort(
+		// r.CreateElement(
+		// 	box.Box,
+		// 	r.Properties{
+		// 		box.Properties{
+		// 			Width:      100,
+		// 			Height:     100,
+		// 			Foreground: tcell.ColorLawnGreen,
+		// 			Border: box.Border{
+		// 				Style:      box.BorderStyleSingle,
+		// 				Foreground: tcell.ColorWhite,
+		// 			},
+		// 		},
+		// 	},
+		// 	nil,
+		// ),
+
+		// r.CreateElement(
+		// 	components.ClickableBox,
+		// 	r.Properties{
+		// 		box.Properties{
+		// 			Width:      100,
+		// 			Height:     100,
+		// 			Foreground: tcell.ColorLawnGreen,
+		// 			Border: box.Border{
+		// 				Style:      box.BorderStyleSingle,
+		// 				Foreground: tcell.ColorWhite,
+		// 			},
+		// 		},
+		// 	},
+		// 	nil,
+		// ),
+
 		r.CreateElement(
 			box.Box,
 			r.Properties{
 				box.Properties{
-					Width:  100,
-					Height: 100,
+					Width:     100,
+					Height:    100,
+					Direction: box.DirectionRow,
 				},
 			},
 			r.Children{
-				r.CreateElement(
-					box.Box,
-					r.Properties{
-						box.Properties{
-							Foreground: tcell.ColorBeige,
-							Border: box.Border{
-								Style:      box.BorderStyleSingle,
-								Foreground: tcell.ColorWhite,
-							},
-							Padding: box.Padding{
-								Top:    0,
-								Right:  1,
-								Bottom: 0,
-								Left:   1,
-							},
-							Title: box.Label{
-								Value: "Example",
-							},
-							Overflow: box.OverflowScrollX,
-						},
-					},
-					r.Children{
-						r.CreateElement(
-							text.Text,
-							r.Properties{
-								text.Properties{
-									Value: loremIpsum,
-									// WordBreak:  text.BreakAll,
-									Foreground: tcell.ColorWhite,
-								},
-							},
-							nil,
-						),
-					},
-				),
+				// r.CreateElement(
+				// 	box.Box,
+				// 	r.Properties{
+				// 		box.Properties{
+				// 			Foreground: tcell.ColorBeige,
+				// 			Grow:       3,
+				// 			Border: box.Border{
+				// 				Style:      box.BorderStyleSingle,
+				// 				Foreground: tcell.ColorWhite,
+				// 			},
+				// 			Padding: box.Padding{
+				// 				Top:    0,
+				// 				Right:  0,
+				// 				Bottom: 0,
+				// 				Left:   0,
+				// 			},
+				// 			Title: box.Label{
+				// 				Value: "Example",
+				// 			},
+				// 			Overflow: box.OverflowScrollX,
+				// 		},
+				// 	},
+				// 	r.Children{
+				// 		r.CreateElement(
+				// 			text.Text,
+				// 			r.Properties{
+				// 				text.Properties{
+				// 					Value: loremIpsum,
+				// 					// WordBreak:  text.BreakAll,
+				// 					Foreground: tcell.ColorWhite,
+				// 				},
+				// 			},
+				// 			nil,
+				// 		),
+				// 	},
+				// ),
 				r.CreateElement(
 					components.ClickableBox,
 					r.Properties{
 						box.Properties{
+							Grow:       1,
 							Foreground: tcell.ColorCadetBlue,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
@@ -83,6 +117,7 @@ func main() {
 					components.ClickableBox,
 					r.Properties{
 						box.Properties{
+							Grow:       1,
 							Foreground: tcell.ColorLawnGreen,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
@@ -92,19 +127,19 @@ func main() {
 					},
 					nil,
 				),
-				r.CreateElement(
-					components.EffectExampleBox,
-					r.Properties{
-						box.Properties{
-							Foreground: tcell.ColorLightCyan,
-							Border: box.Border{
-								Style:      box.BorderStyleSingle,
-								Foreground: tcell.ColorWhite,
-							},
-						},
-					},
-					nil,
-				),
+				// r.CreateElement(
+				// 	components.EffectExampleBox,
+				// 	r.Properties{
+				// 		box.Properties{Grow: 1,
+				// 			Foreground: tcell.ColorLightCyan,
+				// 			Border: box.Border{
+				// 				Style:      box.BorderStyleSingle,
+				// 				Foreground: tcell.ColorWhite,
+				// 			},
+				// 		},
+				// 	},
+				// 	nil,
+				// ),
 			},
 			// nil,
 		),

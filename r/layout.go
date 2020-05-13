@@ -2,6 +2,7 @@ package r
 
 import (
 	"github.com/gdamore/tcell"
+	"retort.dev/debug"
 	"retort.dev/r/internal/quadtree"
 )
 
@@ -31,6 +32,10 @@ type BlockLayout struct {
 
 	Padding, Border, Margin EdgeSizes
 
+	// Grow, like flex-grow
+	// TODO: better docs
+	Grow int
+
 	// ZIndex is the layer this Box is printed on.
 	// Specifically, it determines the order of painting on the screen, with
 	// higher numbers being painted later, and appearing on top.
@@ -39,6 +44,13 @@ type BlockLayout struct {
 
 	// Order is set to control the display order of a group of children
 	Order int
+
+	// Fixed if the Rows, Columns are an explicit fixed size, else they're fluid
+	FixedRows, FixedColumns bool
+
+	// Valid is set when the BlockLayout has been initialised somewhere
+	// if it's false, it means we've got a default
+	Valid bool
 }
 
 type BlockLayouts = []BlockLayout
@@ -69,8 +81,12 @@ type CalculateLayout func(
 	s tcell.Screen,
 	stage CalculateLayoutStage,
 	parentBlockLayout BlockLayout,
-	childrenBlockLayouts *BlockLayouts,
-) (blockLayout BlockLayout, innerBlockLayout BlockLayout)
+	children BlockLayouts,
+) (
+	blockLayout BlockLayout,
+	innerBlockLayout BlockLayout,
+	childrenBlockLayouts BlockLayouts,
+)
 
 // reconcileQuadTree updates the quadtree with our new layout, and provides
 // the default box layout (from the parent) if none is available on the element
@@ -114,34 +130,35 @@ func (r *retort) calculateLayout(f *fiber) {
 		return
 	}
 
+	screen := UseScreen()
+
+	// default own BlockLayout
+	parentBlockLayout := findParentLayout(f)
+
 	if f.calculateLayout != nil {
+		// if parentFiber := f.parent; parentFiber != nil {
+		// 	parentBlockLayout = parentFiber.InnerBlockLayout
+		// 	debug.Log("parent", f.parent.BlockLayout)
+		// 	debug.Log("parent ib", f.parent.InnerBlockLayout)
 
-		screen := UseScreen()
-		cols, rows := screen.Size()
-
-		parentBlockLayout := BlockLayout{
-			X:       0,
-			Y:       0,
-			Rows:    rows,
-			Columns: cols,
-		}
-
-		if parentFiber := f.parent; parentFiber != nil {
-			parentBlockLayout = parentFiber.BlockLayout
-		}
+		// }
+		debug.Log("parentBlockLayout", parentBlockLayout)
 
 		calcLayout := *f.calculateLayout
 
-		f.BlockLayout, f.InnerBlockLayout = calcLayout(
+		blockLayout, innerBlockLayout, _ := calcLayout(
 			screen,
 			CalculateLayoutStageInitial,
 			parentBlockLayout,
 			nil,
 		)
+		debug.Log("clac", blockLayout, innerBlockLayout)
+		f.BlockLayout = blockLayout
+		f.InnerBlockLayout = innerBlockLayout
 	}
 
-	r.calculateLayout(f.child)
-	r.calculateLayout(f.sibling)
+	// r.calculateLayout(f.child)
+	// r.calculateLayout(f.sibling)
 
 	if f.calculateLayout != nil {
 
@@ -156,31 +173,16 @@ func (r *retort) calculateLayout(f *fiber) {
 			if c != nil {
 				cbl = c.BlockLayout
 			}
-
 			childrenBlockLayouts = append(childrenBlockLayouts, cbl)
-		}
-
-		screen := UseScreen()
-		cols, rows := screen.Size()
-
-		parentBlockLayout := BlockLayout{
-			X:       0,
-			Y:       0,
-			Rows:    rows,
-			Columns: cols,
-		}
-
-		if parentFiber := f.parent; parentFiber != nil {
-			parentBlockLayout = parentFiber.BlockLayout
 		}
 
 		calcLayout := *f.calculateLayout
 
-		f.BlockLayout, f.InnerBlockLayout = calcLayout(
+		_, _, childrenBlockLayouts = calcLayout(
 			screen,
 			CalculateLayoutStageWithChildren,
-			parentBlockLayout,
-			&childrenBlockLayouts,
+			f.InnerBlockLayout,
+			childrenBlockLayouts,
 		)
 
 		// Put the updated blockLayouts back onto the children
@@ -188,7 +190,48 @@ func (r *retort) calculateLayout(f *fiber) {
 			if c == nil {
 				continue
 			}
+
 			c.BlockLayout = childrenBlockLayouts[i]
+			c.InnerBlockLayout = childrenBlockLayouts[i]
+		}
+
+		debug.Spew("BEFORE", f.Properties)
+		f.Properties = ReplaceProps(f.Properties, children)
+		f.Properties = ReplaceProps(f.Properties, f.BlockLayout)
+		debug.Spew("AFTER", f.Properties)
+
+	}
+
+	r.calculateLayout(f.child)
+	r.calculateLayout(f.sibling)
+
+	// debug.Spew("end of layout", f)
+	debug.Log("end layout", f.Properties, f.BlockLayout)
+}
+
+func findParentLayout(f *fiber) (parentBlockLayout BlockLayout) {
+	if f == nil {
+		// TODO: this shouldn't happen, it means we've lost the root block
+		return
+	}
+
+	// Default to own layout
+	parentBlockLayout = f.BlockLayout
+
+	if parentFiber := f.parent; parentFiber != nil {
+		// If all four of these values are 0, we cannot render to it, so we
+		// will search higher to find a more valid block
+		if parentFiber.InnerBlockLayout.X != 0 &&
+			parentFiber.InnerBlockLayout.Y != 0 &&
+			parentFiber.InnerBlockLayout.Rows != 0 &&
+			parentFiber.InnerBlockLayout.Columns != 0 {
+			return parentFiber.InnerBlockLayout
 		}
 	}
+
+	if f.parent != nil {
+		return findParentLayout(f.parent)
+	}
+
+	return
 }

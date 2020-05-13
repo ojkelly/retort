@@ -25,12 +25,14 @@ type Properties struct {
 	// If neither Width,Height or Rows,Columns are set, it will be calculated
 	// automatically  When set this is the percentage width and height.
 	// Ignored when Rows,Columns is not 0
-	Width, Height float64 // 0 = auto
+	Width, Height int // 0 = auto
 
 	// Set the size fixed in rows and columns.
 	// Ignored if 0
 	// If both Rows and Width are set Rows with be used.
 	Rows, Columns int
+
+	Grow int
 
 	// Padding Box
 	Padding Padding
@@ -77,8 +79,10 @@ type Margin struct {
 type Direction int
 
 const (
-	Vertical Direction = iota
-	Horizontal
+	DirectionRow Direction = iota
+	DirectionRowReverse
+	DirectionColumn
+	DirectionColumnReverse
 )
 
 type Border struct {

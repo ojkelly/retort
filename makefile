@@ -9,6 +9,7 @@ dev:
 
 # Build the example app
 demo:
+	rm debug.log || true
 	go run example/cmd/main.go
 
 

@@ -22,7 +22,7 @@ func (r *retort) commitRoot() {
 	}
 
 	// w, h := screen.Size()
-
+	// debug.Spew(r.wipRoot)
 	r.calculateLayout(r.wipRoot)
 
 	// Draw
@@ -73,12 +73,13 @@ func (r *retort) commitWork(f *fiber) {
 		// if el.renderToScreen == nil {
 		// 	continue
 		// }
-
+		debug.Log("render b", f.BlockLayout, f.InnerBlockLayout)
+		// debug.Spew(f)
 		// need to keep track of previous location of this element
 		// so when it's called we can clear the screen it used to be in before
 		// redrawing
 		render := *f.renderToScreen
-		render(screen, f.InnerBlockLayout)
+		render(screen, f.BlockLayout)
 		// }
 	case fiberEffectUpdate:
 		// cancelEffects(f)
@@ -90,12 +91,13 @@ func (r *retort) commitWork(f *fiber) {
 		if f.renderToScreen == nil {
 			break
 		}
+		debug.Log("render update b", f.BlockLayout, f.InnerBlockLayout)
 
 		// need to keep track of previous location of this element
 		// so when it's called we can clear the screen it used to be in before
 		// redrawing
 		render := *f.renderToScreen
-		render(screen, f.InnerBlockLayout)
+		render(screen, f.BlockLayout)
 		// }
 	case fiberEffectDelete:
 	}

@@ -2,6 +2,7 @@ package box
 
 import (
 	"github.com/gdamore/tcell"
+	"retort.dev/debug"
 
 	"retort.dev/r"
 )
@@ -16,12 +17,6 @@ func Box(p r.Properties) r.Element {
 		Properties{},
 		"Box requires Properties",
 	).(Properties)
-
-	// Get our BlockLayout
-	// parentBlockLayout := p.GetProperty(
-	// 	r.BlockLayout{},
-	// 	"Box requires a parent BlockLayout.",
-	// ).(r.BlockLayout)
 
 	// Get any children
 	children := p.GetOptionalProperty(
@@ -46,6 +41,9 @@ func Box(p r.Properties) r.Element {
 	return r.CreateScreenElement(
 		calculateBlockLayout(boxProps),
 		func(s tcell.Screen, blockLayout r.BlockLayout) {
+			debug.Log("CreateScreenElement Box", blockLayout)
+			// debug.Spew(p)
+
 			if s == nil {
 				panic("Box can't render no screen")
 			}

@@ -14,6 +14,7 @@ func render(
 	props Properties,
 	layout r.BlockLayout,
 ) {
+
 	x1 := layout.X
 	y1 := layout.Y
 	x2 := layout.X + layout.Columns

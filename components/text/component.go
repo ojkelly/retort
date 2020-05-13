@@ -5,6 +5,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
+	"retort.dev/debug"
 	"retort.dev/intmath"
 	"retort.dev/r"
 )
@@ -17,7 +18,7 @@ type boxState struct {
 // Text is the basic building block for a retort app.
 // Text implements the Text Model, see Properties
 func Text(p r.Properties) r.Element {
-	screen := r.UseScreen()
+	// screen := r.UseScreen()
 
 	// Get our Properties
 	textProps := p.GetProperty(
@@ -51,12 +52,12 @@ func Text(p r.Properties) r.Element {
 		boxState{},
 	).(boxState)
 
-	// Calculate the BlockLayout of this Text
-	BlockLayout := calculateBlockLayout(
-		screen,
-		parentBlockLayout,
-		textProps,
-	)
+	// // Calculate the BlockLayout of this Text
+	// BlockLayout := calculateBlockLayout(
+	// 	screen,
+	// 	parentBlockLayout,
+	// 	textProps,
+	// )
 
 	mouseEventHandler := func(up, down, left, right bool) {
 		now := time.Now()
@@ -149,14 +150,7 @@ func Text(p r.Properties) r.Element {
 		},
 		r.Children{
 			r.CreateScreenElement(
-				func(
-					s tcell.Screen,
-					stage r.CalculateLayoutStage,
-					parentBlockLayout r.BlockLayout,
-					childrenBlockLayouts *r.BlockLayouts,
-				) (r.BlockLayout, r.BlockLayout) {
-					return parentBlockLayout, parentBlockLayout
-				},
+				calculateBlockLayout(boxProps),
 				func(s tcell.Screen, blockLayout r.BlockLayout) {
 					if s == nil {
 						panic("Text can't render no screen")
@@ -168,10 +162,11 @@ func Text(p r.Properties) r.Element {
 						panic("Text can't render on a zero size screen")
 					}
 
+					debug.Spew("render text", blockLayout)
 					renderText(
 						s,
 						textProps,
-						BlockLayout,
+						blockLayout,
 						state.OffsetX, state.OffsetY,
 					)
 				},

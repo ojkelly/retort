@@ -128,6 +128,9 @@ func Retort(root Element, config RetortConfiguration) {
 
 	w, h := screen.Size()
 
+	r.quadtree.Bounds.Width = w
+	r.quadtree.Bounds.Height = h
+
 	r.parseRetortConfiguration()
 
 	r.rootBlockLayout = BlockLayout{
@@ -135,17 +138,23 @@ func Retort(root Element, config RetortConfiguration) {
 		Y:       0,
 		Columns: w + 1, // +1 to account for zero-indexing
 		Rows:    h + 1, // +1 to account for zero-indexing
+		ZIndex:  0,
 	}
-	r.quadtree.Bounds.Width = w
-	r.quadtree.Bounds.Height = h
+
+	// TODO: this seems messy r.rootBlockLayout is copied to a bunch of places
+	r.root.BlockLayout = r.rootBlockLayout
+	r.root.InnerBlockLayout = r.rootBlockLayout
 
 	root.Properties = append(root.Properties, r.rootBlockLayout)
 
 	r.wipRoot = &fiber{
-		componentType: nothingComponent,
-		Properties:    Properties{Children{root}},
-		alternate:     r.currentRoot,
+		componentType:    nothingComponent,
+		Properties:       Properties{Children{root}},
+		alternate:        r.currentRoot,
+		BlockLayout:      r.root.BlockLayout,
+		InnerBlockLayout: r.root.InnerBlockLayout,
 	}
+
 	r.nextUnitOfWork = r.wipRoot
 	r.currentRoot = r.wipRoot.Clone()
 	r.hasChangesToRender = true
@@ -387,12 +396,9 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 	f.dirty = false
 
 	var oldFiber *fiber
-	var blockLayout BlockLayout
 	if r.wipFiber != nil && r.wipFiber.alternate != nil {
 		oldFiber = r.wipFiber.alternate.child
 	}
-
-	blockLayout = f.Properties.GetOptionalProperty(BlockLayout{}).(BlockLayout)
 
 	var prevSibling *fiber
 
@@ -415,28 +421,34 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 		if sameType { // Update
 			f.dirty = true
 			newFiber = &fiber{
-				dirty:          true,
-				componentType:  element.componentType,
-				component:      element.component,
-				Properties:     AddPropsIfNone(element.Properties, blockLayout),
-				parent:         f,
-				alternate:      oldFiber,
-				effect:         fiberEffectUpdate,
-				renderToScreen: element.renderToScreen,
+				dirty:            true,
+				componentType:    element.componentType,
+				component:        element.component,
+				Properties:       AddPropsIfNone(element.Properties, f.InnerBlockLayout),
+				parent:           f,
+				alternate:        oldFiber,
+				effect:           fiberEffectUpdate,
+				renderToScreen:   element.renderToScreen,
+				calculateLayout:  element.calculateLayout,
+				BlockLayout:      f.InnerBlockLayout,
+				InnerBlockLayout: f.InnerBlockLayout,
 			}
 		}
 
 		if element != nil && !sameType { // New Placement
 			f.dirty = true
 			newFiber = &fiber{
-				dirty:          true,
-				componentType:  element.componentType,
-				component:      element.component,
-				Properties:     AddPropsIfNone(element.Properties, blockLayout),
-				parent:         f,
-				alternate:      nil,
-				effect:         fiberEffectPlacement,
-				renderToScreen: element.renderToScreen,
+				dirty:            true,
+				componentType:    element.componentType,
+				component:        element.component,
+				Properties:       AddPropsIfNone(element.Properties, f.InnerBlockLayout),
+				parent:           f,
+				alternate:        nil,
+				effect:           fiberEffectPlacement,
+				renderToScreen:   element.renderToScreen,
+				calculateLayout:  element.calculateLayout,
+				BlockLayout:      f.InnerBlockLayout,
+				InnerBlockLayout: f.InnerBlockLayout,
 			}
 		}
 

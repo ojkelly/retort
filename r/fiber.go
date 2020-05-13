@@ -36,6 +36,7 @@ type fiber struct {
 	renderToScreen *RenderToScreen
 
 	calculateLayout *CalculateLayout
+
 	// this BlockLayout is used internally, mainly to route events
 	// Its different to the BlockLayout that may be passed around in props
 	BlockLayout BlockLayout
@@ -63,18 +64,24 @@ func (f *fiber) Clone() (newFiber *fiber) {
 	// Parent, sibling, and alternate are not cloned
 	// as doing so will recurse forever
 	newFiber = &fiber{
-		componentType: f.componentType,
-		component:     f.component,
-		Properties:    f.Properties,
-		effect:        f.effect,
-		alternate:     f.alternate,
-		hooks:         f.hooks,
-		BlockLayout:   f.BlockLayout,
+		componentType:    f.componentType,
+		component:        f.component,
+		Properties:       f.Properties,
+		effect:           f.effect,
+		alternate:        f.alternate,
+		hooks:            f.hooks,
+		BlockLayout:      f.BlockLayout,
+		InnerBlockLayout: f.InnerBlockLayout,
 	}
 
 	if f.renderToScreen != nil {
 		render := *f.renderToScreen
 		newFiber.renderToScreen = &render
+	}
+
+	if f.calculateLayout != nil {
+		calcLayout := *f.calculateLayout
+		newFiber.calculateLayout = &calcLayout
 	}
 
 	if f.child != nil {

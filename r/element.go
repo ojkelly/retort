@@ -144,15 +144,6 @@ func CreateScreenElement(
 	props Properties,
 	children Children,
 ) *fiber {
-	// debug.Log("CreateScreenElement", render)
-
-	// TODO: maybe this should be multi-step
-	// ie pass in some functions
-	// - calculateLayout BlockLayout
-	// 		- this is called more than once
-	//		-	if the inputs are the same, or the result is the same as before,
-	//		-	then it should be done
-	// - renderToScreen(BlockLayout)
 	return &fiber{
 		componentType:   screenComponent,
 		calculateLayout: &calculateLayout,

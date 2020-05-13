@@ -18,6 +18,8 @@ func Story(p r.Properties) r.Element {
 		box.Box,
 		r.Properties{
 			box.Properties{
+				Width:      100,
+				Height:     100,
 				Foreground: t.Foreground,
 				Border: box.Border{
 					Style:      box.BorderStyleSingle,
