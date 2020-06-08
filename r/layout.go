@@ -212,7 +212,7 @@ func (r *retort) calculateLayout(f *fiber, inheritedBlockLayout BlockLayout) {
 		f.Properties = ReplaceProps(f.Properties, children)
 		// debug.Spew("AFTER", f.Properties)
 
-		debug.Spew("end layout", f)
+		// debug.Spew("end layout", f)
 	}
 
 	// r.calculateLayout(f.child, parentBlockLayout)

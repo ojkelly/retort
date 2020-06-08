@@ -2,8 +2,6 @@ package r
 
 import (
 	"reflect"
-
-	"retort.dev/debug"
 )
 
 type (
@@ -209,7 +207,7 @@ func (props Properties) GetProperty(
 			return p
 		}
 	}
-	debug.Spew(props)
+	// debug.Spew(props)
 	panic(errorMessage)
 }
 

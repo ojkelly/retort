@@ -4,7 +4,6 @@ import (
 	"math"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/debug"
 	"retort.dev/r"
 )
 
@@ -158,7 +157,7 @@ func calculateBlockLayout(
 				}
 
 				growCount = growCount + c.Grow
-				debug.Spew("sizing", c)
+				// debug.Spew("sizing", c)
 
 				if c.Grow == 0 {
 					growCount = growCount + 1 // we force grow to be at least 1
@@ -213,7 +212,7 @@ func calculateBlockLayout(
 					rows = growDivision * grow
 				}
 
-				debug.Spew("c grow", rows, columns, grow, growDivision)
+				// debug.Spew("c grow", rows, columns, grow, growDivision)
 
 				// Ensure rows and columns aren't negative
 				if rows < 0 {
@@ -240,7 +239,7 @@ func calculateBlockLayout(
 				case DirectionColumnReverse:
 					y = y + rows
 				}
-				debug.Spew("c xy", rows, columns, x, y, i)
+				// debug.Spew("c xy", rows, columns, x, y, i)
 
 				blockLayout := r.BlockLayout{
 					X:       x,

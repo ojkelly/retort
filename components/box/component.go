@@ -2,7 +2,6 @@ package box
 
 import (
 	"github.com/gdamore/tcell"
-	"retort.dev/debug"
 
 	"retort.dev/r"
 )
@@ -53,7 +52,7 @@ func Box(p r.Properties) r.Element {
 				panic("Box can't render on a zero size screen")
 			}
 
-			debug.Spew("CreateScreenElement Box", w, h, blockLayout)
+			// debug.Spew("CreateScreenElement Box", w, h, blockLayout)
 			render(
 				screen,
 				boxProps,

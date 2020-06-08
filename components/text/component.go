@@ -5,7 +5,6 @@ import (
 
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
-	"retort.dev/debug"
 	"retort.dev/intmath"
 	"retort.dev/r"
 )
@@ -162,7 +161,7 @@ func Text(p r.Properties) r.Element {
 						panic("Text can't render on a zero size screen")
 					}
 
-					debug.Spew("render text", blockLayout)
+					// debug.Spew("render text", blockLayout)
 					renderText(
 						s,
 						textProps,

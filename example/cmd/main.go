@@ -4,6 +4,7 @@ import (
 	"github.com/gdamore/tcell"
 
 	"retort.dev/components/box"
+	"retort.dev/components/text"
 	"retort.dev/example/components"
 	"retort.dev/r"
 )
@@ -63,42 +64,43 @@ func main() {
 				},
 			},
 			r.Children{
-				// r.CreateElement(
-				// 	box.Box,
-				// 	r.Properties{
-				// 		box.Properties{
-				// 			Foreground: tcell.ColorBeige,
-				// 			Grow:       3,
-				// 			Border: box.Border{
-				// 				Style:      box.BorderStyleSingle,
-				// 				Foreground: tcell.ColorWhite,
-				// 			},
-				// 			Padding: box.Padding{
-				// 				Top:    0,
-				// 				Right:  0,
-				// 				Bottom: 0,
-				// 				Left:   0,
-				// 			},
-				// 			Title: box.Label{
-				// 				Value: "Example",
-				// 			},
-				// 			Overflow: box.OverflowScrollX,
-				// 		},
-				// 	},
-				// 	r.Children{
-				// 		r.CreateElement(
-				// 			text.Text,
-				// 			r.Properties{
-				// 				text.Properties{
-				// 					Value: loremIpsum,
-				// 					// WordBreak:  text.BreakAll,
-				// 					Foreground: tcell.ColorWhite,
-				// 				},
-				// 			},
-				// 			nil,
-				// 		),
-				// 	},
-				// ),
+				r.CreateElement(
+					box.Box,
+					r.Properties{
+						box.Properties{
+							Foreground: tcell.ColorBeige,
+							Grow:       3,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
+								Foreground: tcell.ColorWhite,
+							},
+							Padding: box.Padding{
+								Top:    0,
+								Right:  0,
+								Bottom: 0,
+								Left:   0,
+							},
+							Title: box.Label{
+								Value: "Example",
+							},
+							ZIndex:   5,
+							Overflow: box.OverflowScrollX,
+						},
+					},
+					r.Children{
+						r.CreateElement(
+							text.Text,
+							r.Properties{
+								text.Properties{
+									Value: loremIpsum,
+									// WordBreak:  text.BreakAll,
+									Foreground: tcell.ColorWhite,
+								},
+							},
+							nil,
+						),
+					},
+				),
 				r.CreateElement(
 					components.ClickableBox,
 					r.Properties{

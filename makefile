@@ -23,6 +23,9 @@ race:
 	rm debug.log || true
 	go run -race example/cmd/main.go 2>&1 | tee race.log
 
+DOCS_PORT=6060
+docs:
+	godoc -http=":$(DOCS_PORT)" & open http://localhost:$(DOCS_PORT)/pkg/retort.dev/
 
 # Install watchman on macOS
 # also upgrade pywatchman, to one that works with python3

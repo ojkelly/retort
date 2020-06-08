@@ -1,6 +1,8 @@
 package r
 
 import (
+	"sort"
+
 	"github.com/gdamore/tcell"
 	"retort.dev/debug"
 )
@@ -11,14 +13,36 @@ type RenderToScreen func(
 	blockLayout BlockLayout,
 )
 
+type DisplayCommand struct {
+	RenderToScreen *RenderToScreen
+	BlockLayout    BlockLayout
+}
+
+// DisplayList
+// https://en.wikipedia.org/wiki/Display_list
+type DisplayList []DisplayCommand
+type DisplayListSortZIndex []DisplayCommand
+
+func (dl DisplayListSortZIndex) Len() int { return len(dl) }
+func (dl DisplayListSortZIndex) Less(i, j int) bool {
+	return dl[i].BlockLayout.ZIndex < dl[j].BlockLayout.ZIndex
+}
+func (dl DisplayListSortZIndex) Swap(i, j int) { dl[i], dl[j] = dl[j], dl[i] }
+
+// Sort a DisplayList for rendering to screen, with respect to ZIndexes
+func (dl DisplayList) Sort() {
+	sort.Sort(DisplayListSortZIndex(dl))
+}
+
 // commitRoot processes a tree root, and commits the results
 // It's used to process updates for a fiber render, and is called when the
 // main workloop has run out of tasks
 func (r *retort) commitRoot() {
 	screen := UseScreen()
+	displayList := DisplayList{}
 
 	for _, deletion := range r.deletions {
-		r.commitWork(deletion)
+		displayList = append(displayList, r.processDisplayCommands(deletion)...)
 	}
 
 	// w, h := screen.Size()
@@ -29,8 +53,13 @@ func (r *retort) commitRoot() {
 	// TODO: conver this to a 2 step, first create a DisplayList (a list of commands for what to draw)
 	// then optmise the list, by sorting by z-index, and removing commands that are occuluded
 	// then run the commands sequentially
-	r.commitWork(r.wipRoot)
+	displayList = append(displayList, r.processDisplayCommands(r.wipRoot)...)
 
+	displayList.Sort()
+
+	debug.Spew(displayList)
+
+	r.paint(displayList)
 	screen.Show()
 
 	// Update effects
@@ -50,12 +79,10 @@ func (r *retort) commitRoot() {
 }
 
 // commitWork walks the tree and commits any fiber updates
-func (r *retort) commitWork(f *fiber) {
+func (r *retort) processDisplayCommands(f *fiber) (displayList DisplayList) {
 	if f == nil {
 		return
 	}
-
-	screen := UseScreen()
 
 	// TODO: collect all the renderToScreen paired with their zIndex
 	// render all from lowest to highest index
@@ -78,9 +105,13 @@ func (r *retort) commitWork(f *fiber) {
 		// need to keep track of previous location of this element
 		// so when it's called we can clear the screen it used to be in before
 		// redrawing
-		render := *f.renderToScreen
-		render(screen, f.BlockLayout)
-		// }
+
+		displayCommand := DisplayCommand{
+			RenderToScreen: f.renderToScreen,
+			BlockLayout:    f.BlockLayout,
+		}
+
+		displayList = append(displayList, displayCommand)
 	case fiberEffectUpdate:
 		// cancelEffects(f)
 		// for _, el := range f.elements {
@@ -96,16 +127,22 @@ func (r *retort) commitWork(f *fiber) {
 		// need to keep track of previous location of this element
 		// so when it's called we can clear the screen it used to be in before
 		// redrawing
-		render := *f.renderToScreen
-		render(screen, f.BlockLayout)
-		// }
+		displayCommand := DisplayCommand{
+			RenderToScreen: f.renderToScreen,
+			BlockLayout:    f.BlockLayout,
+		}
+
+		displayList = append(displayList, displayCommand)
+
 	case fiberEffectDelete:
 	}
 
-	r.commitWork(f.child)
-	r.commitWork(f.sibling)
+	displayList = append(displayList, r.processDisplayCommands(f.child)...)
+	displayList = append(displayList, r.processDisplayCommands(f.sibling)...)
 
 	f.dirty = false
+
+	return
 }
 
 func (r *retort) commitDeletion(f *fiber) {
@@ -114,4 +151,20 @@ func (r *retort) commitDeletion(f *fiber) {
 	// } else {
 	//   commitDeletion(fiber.child, domParent);
 	// }
+}
+
+// paint the DisplayList to screen
+func (r *retort) paint(displayList DisplayList) {
+	screen := UseScreen()
+
+	for _, command := range displayList {
+		render := *command.RenderToScreen
+
+		render(
+			screen,
+			command.BlockLayout,
+		)
+	}
+
+	screen.Show()
 }

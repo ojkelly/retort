@@ -20,7 +20,7 @@ import (
 //
 // If you need to write to the Screen, use a ScreenElement.
 // This ensures when your Component has changes, retort will
-// call your RenderToScreen function. Doing this any other way
+// call your DisplayCommand function. Doing this any other way
 // will gaurentee at some point things will get out of sync.
 func UseScreen() tcell.Screen {
 	if hasScreenInstance {
