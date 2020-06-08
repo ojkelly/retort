@@ -163,7 +163,7 @@ func (r *retort) calculateLayout(f *fiber) {
 			_, _, childrenBlockLayouts = calcLayout(
 				screen,
 				CalculateLayoutStageWithChildren,
-				f.BlockLayout,
+				f.InnerBlockLayout,
 				childrenBlockLayouts,
 			)
 
@@ -191,9 +191,7 @@ func (r *retort) calculateLayout(f *fiber) {
 				}
 
 				c.BlockLayout = f.InnerBlockLayout
-
 				c.InnerBlockLayout = f.InnerBlockLayout
-
 			}
 		}
 	}

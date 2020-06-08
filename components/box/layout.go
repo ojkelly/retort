@@ -241,6 +241,16 @@ func calculateBlockLayout(
 				// 	columns = intmath.Min(columns, props.MinWidth)
 				// }
 
+				blockLayout := r.BlockLayout{
+					X:       x,
+					Y:       y,
+					Rows:    rows,
+					Columns: columns,
+					ZIndex:  c.ZIndex,
+					Order:   i,
+					Valid:   true,
+				}
+
 				switch props.Direction {
 				case DirectionRow:
 					x = x + columns
@@ -250,16 +260,6 @@ func calculateBlockLayout(
 					y = y + rows
 				case DirectionColumnReverse:
 					y = y + rows
-				}
-
-				blockLayout := r.BlockLayout{
-					X:       x,
-					Y:       y,
-					Rows:    rows,
-					Columns: columns,
-					ZIndex:  c.ZIndex,
-					Order:   i,
-					Valid:   true,
 				}
 
 				childrenBlockLayouts[i] = blockLayout
