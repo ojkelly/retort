@@ -21,11 +21,13 @@ func calculateBlockLayout(
 		childrenBlockLayouts r.BlockLayouts,
 	) {
 		childrenBlockLayouts = children
-
+		// debug.Spew(stage, children)
 		switch stage {
 		case r.CalculateLayoutStageInitial:
+
 			// if any widths or heights are explicitly set, set them here
 			// otherwise inherit from the parentBlockLayout
+			// debug.Spew("CalculateLayoutStageInitial", parentBlockLayout)
 			rows := parentBlockLayout.Rows
 			columns := parentBlockLayout.Columns
 
@@ -62,6 +64,7 @@ func calculateBlockLayout(
 				Y:            parentBlockLayout.Y,
 				FixedColumns: outerBlockLayout.FixedColumns,
 				FixedRows:    outerBlockLayout.FixedRows,
+				Valid:        true,
 			}
 
 			// Calculate margin
@@ -78,6 +81,7 @@ func calculateBlockLayout(
 				Y:            outerBlockLayout.Y,
 				FixedColumns: outerBlockLayout.FixedColumns,
 				FixedRows:    outerBlockLayout.FixedRows,
+				Valid:        true,
 			}
 
 			innerBlockLayout.Columns = innerBlockLayout.Columns -
@@ -124,7 +128,6 @@ func calculateBlockLayout(
 			}
 			// debug.Spew("CalculateLayoutStageInitial end outer", outerBlockLayout)
 			// debug.Spew("CalculateLayoutStageInitial end inner", innerBlockLayout)
-
 			return
 		case r.CalculateLayoutStageWithChildren:
 			if len(children) == 0 {
@@ -140,6 +143,7 @@ func calculateBlockLayout(
 				Columns: parentBlockLayout.Columns,
 				X:       parentBlockLayout.X,
 				Y:       parentBlockLayout.Y,
+				Valid:   true,
 			}
 
 			colsRemaining := innerBlockLayout.Columns
@@ -147,7 +151,7 @@ func calculateBlockLayout(
 			growCount := 0
 			growDivision := 0
 
-			// Find all children with fixed row,col sizing
+			// Find all children with fixed row,col sizing, and count all grow's
 			for _, c := range children {
 				if c.FixedColumns {
 					colsRemaining = colsRemaining - c.Columns
@@ -157,33 +161,39 @@ func calculateBlockLayout(
 				}
 
 				growCount = growCount + c.Grow
-				// debug.Spew("sizing", c)
 
 				if c.Grow == 0 {
 					growCount = growCount + 1 // we force grow to be at least 1
 				}
+			}
 
-				switch props.Direction {
-				case DirectionRow:
-					growDivision = colsRemaining / growCount
-				case DirectionRowReverse:
-					growDivision = colsRemaining / growCount
-				case DirectionColumn:
-					growDivision = rowsRemaining / growCount
-				case DirectionColumnReverse:
-					growDivision = rowsRemaining / growCount
-				}
-				// Reverse the slices if needed
-				// TODO: just change the order, otherwise we can't link them back
-				if props.Direction == DirectionRowReverse ||
-					props.Direction == DirectionColumnReverse {
-					for i := len(children)/2 - 1; i >= 0; i-- {
-						opp := len(children) - 1 - i
-						children[i], children[opp] = children[opp], children[i]
-					}
+			// debug.Spew("growCount", growCount)
+
+			switch props.Direction {
+			case DirectionRow:
+				growDivision = colsRemaining / growCount
+			case DirectionRowReverse:
+				growDivision = colsRemaining / growCount
+			case DirectionColumn:
+				growDivision = rowsRemaining / growCount
+			case DirectionColumnReverse:
+				growDivision = rowsRemaining / growCount
+			}
+
+			// debug.Spew("colsRemaining", colsRemaining)
+			// debug.Spew("rowsRemaining", rowsRemaining)
+			// debug.Spew("growDivision", growDivision)
+
+			// Reverse the slices if needed
+			if props.Direction == DirectionRowReverse ||
+				props.Direction == DirectionColumnReverse {
+				for i := len(children)/2 - 1; i >= 0; i-- {
+					opp := len(children) - 1 - i
+					children[i], children[opp] = children[opp], children[i]
 				}
 			}
 
+			// Get our starting position
 			x := innerBlockLayout.X
 			y := innerBlockLayout.Y
 
@@ -197,6 +207,7 @@ func calculateBlockLayout(
 				rows := 0
 				columns := 0
 
+				// Calculate the size of this block based on the direction of the parent
 				switch props.Direction {
 				case DirectionRow:
 					columns = growDivision * grow
@@ -222,6 +233,7 @@ func calculateBlockLayout(
 					columns = 0
 				}
 
+				// TODO: implement minHeight/width for children
 				// if props.MinHeight != 0 {
 				// 	rows = intmath.Min(rows, props.MinHeight)
 				// }
@@ -239,7 +251,6 @@ func calculateBlockLayout(
 				case DirectionColumnReverse:
 					y = y + rows
 				}
-				// debug.Spew("c xy", rows, columns, x, y, i)
 
 				blockLayout := r.BlockLayout{
 					X:       x,
@@ -248,7 +259,9 @@ func calculateBlockLayout(
 					Columns: columns,
 					ZIndex:  c.ZIndex,
 					Order:   i,
+					Valid:   true,
 				}
+
 				childrenBlockLayouts[i] = blockLayout
 			}
 
@@ -261,7 +274,6 @@ func calculateBlockLayout(
 				}
 			}
 
-			// debug.Spew("c", childrenBlockLayouts)
 			return
 		case r.CalculateLayoutStageFinal:
 

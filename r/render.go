@@ -41,14 +41,18 @@ func (r *retort) commitRoot() {
 	screen := UseScreen()
 	displayList := DisplayList{}
 
-	for _, deletion := range r.deletions {
-		displayList = append(displayList, r.processDisplayCommands(deletion)...)
-	}
+	// for _, deletion := range r.deletions {
+	// 	displayList = append(displayList, r.processDisplayCommands(deletion)...)
+	// }
 
 	// w, h := screen.Size()
-	// debug.Spew(r.wipRoot)
-	r.calculateLayout(r.wipRoot, r.wipRoot.InnerBlockLayout)
+	debug.Log("Render: Calculate Layout")
 
+	r.calculateLayout(r.wipRoot)
+
+	// debug.Spew(r.wipRoot)
+
+	debug.Log("Render: Create Display List")
 	// Draw
 	// TODO: conver this to a 2 step, first create a DisplayList (a list of commands for what to draw)
 	// then optmise the list, by sorting by z-index, and removing commands that are occuluded
@@ -57,9 +61,11 @@ func (r *retort) commitRoot() {
 
 	displayList.Sort()
 
-	debug.Spew(displayList)
+	debug.Spew("DisplayList", displayList)
 
+	debug.Log("Render: Paint")
 	r.paint(displayList)
+
 	screen.Show()
 
 	// Update effects
@@ -84,27 +90,21 @@ func (r *retort) processDisplayCommands(f *fiber) (displayList DisplayList) {
 		return
 	}
 
+	// debug.Log(fmt.Sprintf("processDisplayCommands address: %p", f))
+	// debug.Spew(f)
+
 	// TODO: collect all the renderToScreen paired with their zIndex
 	// render all from lowest to highest index
 	switch f.effect {
 	case fiberEffectNothing:
 	case fiberEffectPlacement:
-		// debug.Log("fiberEffectPlacement", f)
-		// TODO: extract all renderToScreen's and execute them in ZIndex order
-		// lowest to highest this should allow layered things
-		// for _, el := range f.elements {
+
 		if f.renderToScreen == nil {
 			break
 		}
 
-		// if el.renderToScreen == nil {
-		// 	continue
-		// }
-		debug.Log("render b", f.BlockLayout, f.InnerBlockLayout)
+		// debug.Spew(fmt.Sprintf("f address %p", f), "render b", f.BlockLayout)
 		// debug.Spew(f)
-		// need to keep track of previous location of this element
-		// so when it's called we can clear the screen it used to be in before
-		// redrawing
 
 		displayCommand := DisplayCommand{
 			RenderToScreen: f.renderToScreen,
@@ -114,19 +114,12 @@ func (r *retort) processDisplayCommands(f *fiber) (displayList DisplayList) {
 		displayList = append(displayList, displayCommand)
 	case fiberEffectUpdate:
 		// cancelEffects(f)
-		// for _, el := range f.elements {
-		// if el == nil || el.renderToScreen == nil {
-		// 	continue
-		// }
 
 		if f.renderToScreen == nil {
 			break
 		}
-		debug.Log("render update b", f.BlockLayout, f.InnerBlockLayout)
+		// debug.Log(fmt.Sprintf("f address %p", f), "render update b", f.BlockLayout)
 
-		// need to keep track of previous location of this element
-		// so when it's called we can clear the screen it used to be in before
-		// redrawing
 		displayCommand := DisplayCommand{
 			RenderToScreen: f.renderToScreen,
 			BlockLayout:    f.BlockLayout,
@@ -137,8 +130,13 @@ func (r *retort) processDisplayCommands(f *fiber) (displayList DisplayList) {
 	case fiberEffectDelete:
 	}
 
-	displayList = append(displayList, r.processDisplayCommands(f.child)...)
-	displayList = append(displayList, r.processDisplayCommands(f.sibling)...)
+	if f.child != nil {
+		displayList = append(displayList, r.processDisplayCommands(f.child)...)
+	}
+
+	if f.sibling != nil {
+		displayList = append(displayList, r.processDisplayCommands(f.sibling)...)
+	}
 
 	f.dirty = false
 

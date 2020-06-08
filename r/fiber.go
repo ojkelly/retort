@@ -59,6 +59,29 @@ func (f *fiber) Child() *fiber {
 	return f.child
 }
 
+func (f *fiber) ImmeditateChildren() (children []*fiber) {
+	if f.child == nil {
+		return
+	}
+
+	children = append(children, f.child)
+	children = append(children, f.child.getSibling()...)
+
+	return
+}
+
+func (f *fiber) getSibling() (children []*fiber) {
+	if f.sibling == nil {
+		return
+	}
+
+	children = append(children, f.sibling)
+
+	children = append(children, f.sibling.getSibling()...)
+
+	return
+}
+
 // Clone safely makes a copy of a hook for use with fiber updates
 func (f *fiber) Clone() (newFiber *fiber) {
 	// Parent, sibling, and alternate are not cloned
