@@ -5,8 +5,8 @@ import (
 
 	"github.com/gdamore/tcell"
 	runewidth "github.com/mattn/go-runewidth"
-	"retort.dev/intmath"
 	"retort.dev/r"
+	"retort.dev/r/intmath"
 )
 
 func renderText(

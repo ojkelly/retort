@@ -35,7 +35,7 @@ type (
 //  import (
 //    "github.com/gdamore/tcell"
 //    "retort.dev/component"
-//    "retort.dev/debug"
+//    "retort.dev/r/debug"
 //    "retort.dev/r"
 //  )
 //

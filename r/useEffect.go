@@ -3,7 +3,7 @@ package r
 import (
 	"reflect"
 
-	"retort.dev/debug"
+	"retort.dev/r/debug"
 )
 
 type (

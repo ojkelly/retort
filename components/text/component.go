@@ -5,8 +5,8 @@ import (
 
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
-	"retort.dev/intmath"
 	"retort.dev/r"
+	"retort.dev/r/intmath"
 )
 
 type boxState struct {

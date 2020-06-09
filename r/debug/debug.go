@@ -1,4 +1,4 @@
-package debug // import "retort.dev/debug"
+package debug // import "retort.dev/r/debug"
 
 import (
 	"fmt"

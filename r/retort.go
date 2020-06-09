@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/encoding"
-	d "retort.dev/debug"
+	d "retort.dev/r/debug"
 	"retort.dev/r/internal/quadtree"
 )
 

@@ -5,10 +5,10 @@ import (
 
 	"retort.dev/components/box"
 	"retort.dev/components/text"
-	"retort.dev/debug"
 	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 )
 
 type MenuItemProps struct {

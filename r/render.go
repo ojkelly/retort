@@ -4,7 +4,7 @@ import (
 	"sort"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/debug"
+	"retort.dev/r/debug"
 )
 
 // RenderToScreen is the callback passed to create a Screen Element
