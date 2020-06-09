@@ -397,7 +397,7 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 
 	var oldFiber *fiber
 	if r.wipFiber != nil && r.wipFiber.alternate != nil {
-		oldFiber = r.wipFiber.alternate
+		oldFiber = r.wipFiber.alternate.child
 	}
 
 	var prevSibling *fiber

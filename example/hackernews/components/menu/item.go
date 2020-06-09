@@ -43,6 +43,7 @@ func MenuItem(p r.Properties) r.Element {
 			Foreground: t.Border,
 		},
 	}
+	debug.Log("menu item loading", loading)
 
 	if loading {
 		return r.CreateElement(
@@ -59,7 +60,7 @@ func MenuItem(p r.Properties) r.Element {
 	}
 
 	if err != nil {
-		debug.Log("menut item err", err)
+		debug.Log("menu item err", err)
 		return r.CreateElement(
 			text.Text,
 			r.Properties{

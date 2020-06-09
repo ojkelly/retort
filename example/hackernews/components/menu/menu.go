@@ -8,6 +8,7 @@ import (
 	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 )
 
 type Properties struct {
@@ -39,6 +40,8 @@ func Menu(p r.Properties) r.Element {
 	}
 
 	stories := hn.UseTopStories()
+
+	debug.Spew("stories", stories)
 
 	var items r.Children
 	if stories.Data != nil &&

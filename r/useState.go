@@ -3,6 +3,8 @@ package r
 import (
 	"reflect"
 	"sync"
+
+	"retort.dev/r/debug"
 )
 
 type (
@@ -123,6 +125,7 @@ func UseState(initial State) (State, SetState) {
 
 		for _, action := range actions {
 			h.state = action(h.state)
+			debug.Spew("state update", action, h.state)
 		}
 	}
 

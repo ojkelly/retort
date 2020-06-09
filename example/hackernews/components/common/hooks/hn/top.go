@@ -5,6 +5,7 @@ import (
 
 	"retort.dev/example/hackernews/components/cache"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 )
 
 var CacheTimeout time.Duration = time.Minute
@@ -33,6 +34,7 @@ func UseTopStories() TopStoriesState {
 		TopStoriesState{Loading: true},
 	).(TopStoriesState)
 
+	debug.Spew(state)
 	// Update list of Top Stories
 	r.UseEffect(func() r.EffectCancel {
 		if storyCache.Update == nil {
@@ -42,10 +44,13 @@ func UseTopStories() TopStoriesState {
 		if checked {
 			return func() {}
 		}
+
 		checked = true
-		topStories, err := c.GetTopStories(40)
+
+		topStories, err := c.GetTopStories(10)
 
 		if err != nil {
+			debug.Spew("topStories err", err)
 			setState(func(s r.State) r.State {
 				return r.State{TopStoriesState{
 					Loading: false,
@@ -53,6 +58,7 @@ func UseTopStories() TopStoriesState {
 				}}
 			})
 		} else {
+			debug.Spew("topStories", topStories)
 			setState(func(s r.State) r.State {
 				return r.State{TopStoriesState{
 					Data:    topStories,
@@ -62,21 +68,21 @@ func UseTopStories() TopStoriesState {
 			})
 		}
 
-		// for _, id := range topStories {
-		// 	item := cache.StoryItem{
-		// 		Story:       nil,
-		// 		Loading:     false,
-		// 		LastUpdated: time.Now(),
-		// 	}
-		// 	storyCache.Update(id, item)
-		// }
+		for _, id := range topStories {
+			item := cache.StoryItem{
+				Story:       nil,
+				Loading:     false,
+				LastUpdated: time.Now(),
+			}
+			storyCache.Update(id, item)
+		}
 
 		return func() {}
 	}, r.EffectDependencies{storyCache.Update})
 
 	// storiesContext := r.UseContext(cache.StoriesContext)
 
-	// Hydrate stories into cache
+	// // Hydrate stories into cache
 	// r.UseEffect(func() r.EffectCancel {
 	// 	HydrateStories(state.Data, storiesContext)
 
