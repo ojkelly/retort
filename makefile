@@ -42,3 +42,9 @@ serve:
 install-watchman-macos:
 	pip install pywatchman
 	brew install watchman
+
+prepare-site:
+	find ./** -type d -exec cp redirect.html {}/index.html \;
+
+remove-redirect-html:
+	rm -rf ./**/index.html
