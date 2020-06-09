@@ -97,7 +97,7 @@ func (qt *Quadtree) split() {
 		MaxLevels:  qt.MaxLevels,
 		Level:      nextLevel,
 		Objects:    make([]Bounds, 0),
-		Nodes:      make([]Quadtree, 0, 4),
+		Nodes:      make([]Quadtree, 4),
 	})
 
 	//top left node (1)
@@ -112,7 +112,7 @@ func (qt *Quadtree) split() {
 		MaxLevels:  qt.MaxLevels,
 		Level:      nextLevel,
 		Objects:    make([]Bounds, 0),
-		Nodes:      make([]Quadtree, 0, 4),
+		Nodes:      make([]Quadtree, 4),
 	})
 
 	//bottom left node (2)
@@ -127,7 +127,7 @@ func (qt *Quadtree) split() {
 		MaxLevels:  qt.MaxLevels,
 		Level:      nextLevel,
 		Objects:    make([]Bounds, 0),
-		Nodes:      make([]Quadtree, 0, 4),
+		Nodes:      make([]Quadtree, 4),
 	})
 
 	//bottom right node (3)
@@ -142,7 +142,7 @@ func (qt *Quadtree) split() {
 		MaxLevels:  qt.MaxLevels,
 		Level:      nextLevel,
 		Objects:    make([]Bounds, 0),
-		Nodes:      make([]Quadtree, 0, 4),
+		Nodes:      make([]Quadtree, 4),
 	})
 
 }
@@ -218,6 +218,9 @@ func (qt *Quadtree) Insert(pRect Bounds) {
 				splice := qt.Objects[i]                                  // Get the object out of the slice
 				qt.Objects = append(qt.Objects[:i], qt.Objects[i+1:]...) // Remove the object from the slice
 
+				if len(qt.Nodes) != 4 {
+					qt.Nodes = make([]Quadtree, 4)
+				}
 				qt.Nodes[index].Insert(splice)
 			} else {
 				i++

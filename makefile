@@ -7,6 +7,9 @@ dev:
 	rm debug.log || true
 	go run example/hackernews/main.go
 
+test:
+	go test ./...
+
 # Build the example app
 demo:
 	rm debug.log || true
