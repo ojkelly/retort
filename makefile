@@ -27,6 +27,12 @@ DOCS_PORT=6060
 docs:
 	godoc -http=":$(DOCS_PORT)" & open http://localhost:$(DOCS_PORT)/pkg/retort.dev/
 
+# Serve the retort.dev website for development
+# requires npm and npx on the system
+# its just a static page, load it in a browser preview if you want
+serve:
+	npx serve .
+
 # Install watchman on macOS
 # also upgrade pywatchman, to one that works with python3
 # https://github.com/facebook/watchman/issues/631#issuecomment-541255161
