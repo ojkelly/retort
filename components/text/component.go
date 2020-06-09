@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/component/box"
-	"retort.dev/debug"
+	"retort.dev/components/box"
+	"retort.dev/intmath"
 	"retort.dev/r"
 )
 
@@ -17,7 +17,7 @@ type boxState struct {
 // Text is the basic building block for a retort app.
 // Text implements the Text Model, see Properties
 func Text(p r.Properties) r.Element {
-	screen := r.UseScreen()
+	// screen := r.UseScreen()
 
 	// Get our Properties
 	textProps := p.GetProperty(
@@ -30,11 +30,11 @@ func Text(p r.Properties) r.Element {
 		box.Properties{},
 	).(box.Properties)
 
-	// Get our BoxLayout
-	parentBoxLayout := p.GetProperty(
-		r.BoxLayout{},
-		"Text requires a parent BoxLayout.",
-	).(r.BoxLayout)
+	// Get our BlockLayout
+	parentBlockLayout := p.GetProperty(
+		r.BlockLayout{},
+		"Text requires a parent BlockLayout.",
+	).(r.BlockLayout)
 
 	// Get any children
 	children := p.GetOptionalProperty(
@@ -51,37 +51,17 @@ func Text(p r.Properties) r.Element {
 		boxState{},
 	).(boxState)
 
-	// Calculate the BoxLayout of this Text
-	boxLayout := calculateBoxLayout(
-		screen,
-		parentBoxLayout,
-		textProps,
-	)
+	// // Calculate the BlockLayout of this Text
+	// BlockLayout := calculateBlockLayout(
+	// 	screen,
+	// 	parentBlockLayout,
+	// 	textProps,
+	// )
 
 	mouseEventHandler := func(up, down, left, right bool) {
-		offsetXDelta := 0
-		offsetYDelta := 0
-
-		switch {
-		case up:
-			offsetXDelta = -1
-		case down:
-			offsetXDelta = 1
-		case left:
-			offsetYDelta = -1
-		case right:
-			offsetYDelta = 1
-		}
-
-		if offsetXDelta == 0 && offsetYDelta == 0 {
-			// nothing to update
-			return
-		}
-
 		now := time.Now()
 
 		if now.Sub(state.lastUpdated) < 16*time.Millisecond {
-			debug.Spew("throttled ", now.Sub(state.lastUpdated), state.lastUpdated, now)
 			// throttle to one update a second
 			return
 		}
@@ -91,25 +71,59 @@ func Text(p r.Properties) r.Element {
 				boxState{},
 			).(boxState)
 
-			// BUG(ojkelly): this is a bit janky and could be better
+			offsetXDelta := 0
+			offsetYDelta := 0
+
+			switch {
+			case up:
+				offsetXDelta = -1
+				if state.OffsetX == 0 {
+					return r.State{state}
+				}
+			case down:
+				offsetXDelta = 1
+			case left:
+				offsetYDelta = -1
+				if state.OffsetY == 0 {
+					return r.State{state}
+				}
+
+			case right:
+				offsetYDelta = 1
+			}
+
+			if offsetXDelta == 0 && offsetYDelta == 0 {
+				return r.State{state}
+			}
 
 			offsetX := state.OffsetX
 			offsetY := state.OffsetY
 
 			if boxProps.Overflow == box.OverflowScroll ||
 				boxProps.Overflow == box.OverflowScrollX {
-				offsetX = min(
-					intAbs(state.OffsetX+offsetXDelta),
-					int(float64(parentBoxLayout.Columns)/0.2),
-				)
+				// When the offset is near the top, we just set the value
+				// this prevents issues with the float64 conversion below
+				// that was casuing jankiness
+				if state.OffsetX < 3 {
+					offsetX = state.OffsetX + offsetXDelta
+				} else {
+					offsetX = intmath.Min(
+						intmath.Abs(state.OffsetX+offsetXDelta),
+						int(float64(parentBlockLayout.Columns)/0.2),
+					)
+				}
 			}
 
 			if boxProps.Overflow == box.OverflowScroll ||
 				boxProps.Overflow == box.OverflowScrollY {
-				offsetY = min(
-					intAbs(state.OffsetY+offsetYDelta),
-					int(float64(parentBoxLayout.Rows)/0.2),
-				)
+				if offsetY < 3 {
+					offsetY = state.OffsetY + offsetYDelta
+				} else {
+					offsetY = intmath.Min(
+						intmath.Abs(state.OffsetY+offsetYDelta),
+						int(float64(parentBlockLayout.Rows)/0.2),
+					)
+				}
 			}
 
 			return r.State{boxState{
@@ -135,7 +149,8 @@ func Text(p r.Properties) r.Element {
 		},
 		r.Children{
 			r.CreateScreenElement(
-				func(s tcell.Screen) r.BoxLayout {
+				calculateBlockLayout(boxProps),
+				func(s tcell.Screen, blockLayout r.BlockLayout) {
 					if s == nil {
 						panic("Text can't render no screen")
 					}
@@ -146,14 +161,13 @@ func Text(p r.Properties) r.Element {
 						panic("Text can't render on a zero size screen")
 					}
 
+					// debug.Spew("render text", blockLayout)
 					renderText(
 						s,
 						textProps,
-						boxLayout,
+						blockLayout,
 						state.OffsetX, state.OffsetY,
 					)
-
-					return boxLayout
 				},
 				r.Properties{},
 				nil,

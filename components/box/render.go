@@ -12,9 +12,9 @@ import (
 func render(
 	s tcell.Screen,
 	props Properties,
-	layout r.BoxLayout,
+	layout r.BlockLayout,
 ) {
-
+	// debug.Spew("render", layout)
 	x1 := layout.X
 	y1 := layout.Y
 	x2 := layout.X + layout.Columns
@@ -58,9 +58,22 @@ func render(
 		renderLabel(
 			s,
 			props.Title,
-			r.BoxLayout{
+			r.BlockLayout{
 				X:       layout.X + 2, // Bump it over 1 for the corner, and 1 for style
 				Y:       layout.Y,
+				Rows:    1,
+				Columns: layout.Columns,
+			},
+			borderStyle,
+		)
+	}
+	if props.Footer.Value != "" {
+		renderLabel(
+			s,
+			props.Footer,
+			r.BlockLayout{
+				X:       layout.X + 2, // Bump it over 1 for the corner, and 1 for style
+				Y:       layout.Y + layout.Rows,
 				Rows:    1,
 				Columns: layout.Columns,
 			},
@@ -72,7 +85,7 @@ func render(
 func renderLabel(
 	s tcell.Screen,
 	label Label,
-	layout r.BoxLayout,
+	layout r.BlockLayout,
 	style tcell.Style,
 ) {
 

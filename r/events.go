@@ -1,8 +1,9 @@
 package r
 
-import "github.com/gdamore/tcell"
-
-import "retort.dev/r/internal/quadtree"
+import (
+	"github.com/gdamore/tcell"
+	"retort.dev/r/internal/quadtree"
+)
 
 type (
 	// EventHandler is a Property you can add to a Component that will
@@ -71,7 +72,7 @@ func (r *retort) handleEvents() {
 		case *tcell.EventTime:
 		default:
 			if ev != nil {
-				// debug.Spew("Unhandled Event", ev)
+				// debug.Log("Unhandled Event", ev)
 			}
 		}
 
@@ -199,7 +200,7 @@ func (r *retort) handleMouseEvent(ev *tcell.EventMouse) {
 			match = true
 		}
 
-		bl := r.Value.(*fiber).boxLayout
+		bl := r.Value.(*fiber).BlockLayout
 
 		// find the area of the box
 		area := bl.Columns * bl.Rows
@@ -241,5 +242,5 @@ func (r *retort) handleMouseEvent(ev *tcell.EventMouse) {
 }
 
 func handleScrollEvent(ev *tcell.EventMouse) {
-
+	//
 }

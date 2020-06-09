@@ -1,8 +1,8 @@
-package example
+package components
 
 import (
 	"github.com/gdamore/tcell"
-	"retort.dev/component/box"
+	"retort.dev/components/box"
 	"retort.dev/r"
 )
 

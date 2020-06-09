@@ -5,4 +5,4 @@ for retort apps.
 
 
 */
-package box // import "retort.dev/component/box"
+package box // import "retort.dev/components/box"

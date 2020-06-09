@@ -3,9 +3,8 @@ package main
 import (
 	"github.com/gdamore/tcell"
 
-	"retort.dev/component/box"
-	"retort.dev/component/text"
-	"retort.dev/example"
+	"retort.dev/components/box"
+	"retort.dev/example/components"
 	"retort.dev/r"
 )
 
@@ -20,90 +19,104 @@ Et malesuada fames ac turpis egestas. Egestas dui id ornare arcu odio ut sem nul
 Amet est placerat in egestas erat imperdiet sed euismod. Eget felis eget nunc lobortis. Ac auctor augue mauris augue neque. Ac tortor vitae purus faucibus ornare suspendisse. Placerat duis ultricies lacus sed. Tortor vitae purus faucibus ornare suspendisse sed nisi. Vulputate dignissim suspendisse in est ante in nibh. Elit duis tristique sollicitudin nibh sit. Tellus at urna condimentum mattis pellentesque id nibh tortor. Proin fermentum leo vel orci porta non pulvinar neque. Eu ultrices vitae auctor eu augue ut. Erat pellentesque adipiscing commodo elit at imperdiet. Auctor elit sed vulputate mi sit amet mauris. Tellus orci ac auctor augue mauris.`
 
 func main() {
-
 	r.Retort(
 		r.CreateElement(
 			box.Box,
 			r.Properties{
 				box.Properties{
-					Width:  100,
-					Height: 100,
+					// Width:     100,
+					// Height:    100,
+					Direction: box.DirectionColumn,
+					Border: box.Border{
+						Style:      box.BorderStyleSingle,
+						Foreground: tcell.ColorWhite,
+					},
+					Title: box.Label{
+						Value: "Wrapper",
+					},
 				},
 			},
 			r.Children{
+				// r.CreateElement(
+				// 	box.Box,
+				// 	r.Properties{
+				// 		box.Properties{
+				// 			Foreground: tcell.ColorBeige,
+				// 			Grow:       3,
+				// 			Border: box.Border{
+				// 				Style:      box.BorderStyleSingle,
+				// 				Foreground: tcell.ColorWhite,
+				// 			},
+				// 			Padding: box.Padding{
+				// 				Top:    0,
+				// 				Right:  0,
+				// 				Bottom: 0,
+				// 				Left:   0,
+				// 			},
+				// 			Title: box.Label{
+				// 				Value: "Example",
+				// 			},
+				// 			ZIndex:   5,
+				// 			Overflow: box.OverflowScrollX,
+				// 		},
+				// 	},
+				// 	r.Children{
+				// 		r.CreateElement(
+				// 			text.Text,
+				// 			r.Properties{
+				// 				text.Properties{
+				// 					Value:      loremIpsum,
+				// 					WordBreak:  text.BreakAll,
+				// 					Foreground: tcell.ColorWhite,
+				// 				},
+				// 			},
+				// 			nil,
+				// 		),
+				// 	},
+				// ),
+				// r.CreateElement(
+				// 	components.ClickableBox,
+				// 	r.Properties{
+				// 		box.Properties{
+				// 			Grow:       1,
+				// 			Foreground: tcell.ColorCadetBlue,
+				// 			Border: box.Border{
+				// 				Style:      box.BorderStyleSingle,
+				// 				Foreground: tcell.ColorWhite,
+				// 			},
+				// 		},
+				// 	},
+				// 	nil,
+				// ),
 				r.CreateElement(
-					box.Box,
+					components.ClickableBox,
 					r.Properties{
 						box.Properties{
-							Foreground:    tcell.ColorBeige,
-							FlexDirection: box.FlexDirectionColumn,
-							Border: box.Border{
-								Style:      box.BorderStyleSingle,
-								Foreground: tcell.ColorWhite,
-							},
-							Padding: box.Padding{
-								Top:    0,
-								Right:  1,
-								Bottom: 0,
-								Left:   1,
-							},
-							Title: box.Label{
-								Value: "Example",
-							},
-							Overflow: box.OverflowScrollX,
-						},
-					},
-					r.Children{
-						r.CreateElement(
-							text.Text,
-							r.Properties{
-								text.Properties{
-									Value: loremIpsum,
-									// WordBreak:  text.BreakAll,
-									Foreground: tcell.ColorWhite,
-								},
-							},
-							nil,
-						),
-					},
-				),
-				r.CreateElement(
-					example.ClickableBox,
-					r.Properties{
-						box.Properties{
-							FlexGrow:   1,
-							Foreground: tcell.ColorCadetBlue,
-							Border: box.Border{
-								Style:      box.BorderStyleSingle,
-								Foreground: tcell.ColorWhite,
-							},
-						},
-					},
-					nil,
-				),
-				r.CreateElement(
-					example.ClickableBox,
-					r.Properties{
-						box.Properties{
-							FlexGrow:   1,
+							Grow:       1,
 							Foreground: tcell.ColorLawnGreen,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
 							},
+							Title: box.Label{
+								Value: "Top",
+							},
 						},
 					},
 					nil,
 				),
 				r.CreateElement(
-					example.EffectExampleBox,
+					components.EffectExampleBox,
 					r.Properties{
 						box.Properties{
-							FlexGrow:   1,
+							Grow:       1,
 							Foreground: tcell.ColorLightCyan,
 							Border: box.Border{
 								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
+							},
+							Title: box.Label{
+								Value: "Bottom",
 							},
 						},
 					},

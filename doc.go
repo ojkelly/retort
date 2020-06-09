@@ -30,23 +30,24 @@ UseQuit: use this to exit the application.
 Why
 
 As stated by the inspiration for this package "Declarative views make your code
-more predictable and easier to debug.Spew". The original author (Owen Kelly) has
+more predictable and easier to debug.Log". The original author (Owen Kelly) has
 years of experience building complex websites with React, and wanted a similar
 reactive/declarative tool for terminal user interfaces in golang.
 
 The biggest reason though, is state management.
 
 When you build an interactive user interface, the biggest challenge is always
-state management. The model that a reactive framework like retort allows, is one
-of the simplest ways to solve the state management problem. Much moreso than an
-imperitive user interface library.
+state management. The model that a reactive framework like retort (and React
+before it) allows, is one of the simplest ways to solve the state management
+problem. Much moreso than an imperitive user interface library.
 
 About the Name
 
-retort: to answer (an argument) by a counter argument
+retort: to answer, or react to, an argument by a counter argument
 
-Terminals usually have arguments. Don't think about it too much.
+Terminals usually have arguments, often with their user.
 
+Don't think about it too much.
 
 Examples
 

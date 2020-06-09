@@ -4,7 +4,7 @@ This to do before this is releasable.
 
 - [] TODO: Add title and footer text
 - [] TODO: Add ability to set content
-- [] TODO: Add flex-start and flex-end
+- [] TODO: Add layout engine
 
 # Components
 
@@ -24,9 +24,7 @@ This to do before this is releasable.
 
 # API
 
-- [] TODO: Can we move hooks to their own package and interact via a channel
-  - maybe?
-  - goal is to clean up the public api as much as possible
+- goal is to clean up the public api as much as possible
 
 # Rendering
 

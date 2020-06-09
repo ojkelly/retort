@@ -34,29 +34,77 @@ type fiber struct {
 
 	// Layout Information
 	renderToScreen *RenderToScreen
-	// this boxLayout is used internally, mainly to route events
-	// Its different to the boxLayout that may be passed around in props
-	boxLayout BoxLayout
 
-	focus bool
+	calculateLayout *CalculateLayout
+
+	// this BlockLayout is used internally, mainly to route events
+	// Its different to the BlockLayout that may be passed around in props
+	BlockLayout BlockLayout
+
+	// InnerBlockLayout is passed to children of this fiber
+	InnerBlockLayout BlockLayout
+
+	// focus bool
 }
 
+func (f *fiber) Parent() *fiber {
+	return f.parent
+}
+
+func (f *fiber) Sibling() *fiber {
+	return f.sibling
+}
+
+func (f *fiber) Child() *fiber {
+	return f.child
+}
+
+func (f *fiber) ImmeditateChildren() (children []*fiber) {
+	if f.child == nil {
+		return
+	}
+
+	children = append(children, f.child)
+	children = append(children, f.child.getSibling()...)
+
+	return
+}
+
+func (f *fiber) getSibling() (children []*fiber) {
+	if f.sibling == nil {
+		return
+	}
+
+	children = append(children, f.sibling)
+
+	children = append(children, f.sibling.getSibling()...)
+
+	return
+}
+
+// Clone safely makes a copy of a hook for use with fiber updates
 func (f *fiber) Clone() (newFiber *fiber) {
 	// Parent, sibling, and alternate are not cloned
 	// as doing so will recurse forever
 	newFiber = &fiber{
-		componentType: f.componentType,
-		component:     f.component,
-		Properties:    f.Properties,
-		effect:        f.effect,
-		alternate:     f.alternate,
-		hooks:         f.hooks,
-		boxLayout:     f.boxLayout,
+		componentType:    f.componentType,
+		component:        f.component,
+		Properties:       f.Properties,
+		effect:           f.effect,
+		alternate:        f.alternate,
+		hooks:            f.hooks,
+		BlockLayout:      f.BlockLayout,
+		InnerBlockLayout: f.InnerBlockLayout,
 	}
 
 	if f.renderToScreen != nil {
 		render := *f.renderToScreen
 		newFiber.renderToScreen = &render
+	}
+
+	if f.calculateLayout != nil {
+		calcLayout := *f.calculateLayout
+		newFiber.calculateLayout = &calcLayout
 	}
 
 	if f.child != nil {
@@ -69,6 +117,7 @@ func (f *fiber) Clone() (newFiber *fiber) {
 	return
 }
 
+// cloneElements safely makes a copy of elements of a fiber for use with updates
 func cloneElements(fibers []*fiber) (cloned []*fiber) {
 	cloned = []*fiber{}
 

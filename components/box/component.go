@@ -17,34 +17,31 @@ func Box(p r.Properties) r.Element {
 		"Box requires Properties",
 	).(Properties)
 
-	// Get our BoxLayout
-	parentBoxLayout := p.GetProperty(
-		r.BoxLayout{},
-		"Box requires a parent BoxLayout.",
-	).(r.BoxLayout)
-
 	// Get any children
 	children := p.GetOptionalProperty(
 		r.Children{},
 	).(r.Children)
 
-	// Calculate the BoxLayout of this Box
-	boxLayout, innerBoxLayout := calculateBoxLayout(
-		screen,
-		parentBoxLayout,
-		boxProps,
-	)
+	// // Calculate the BlockLayout of this Box
+	// blockLayout, innerBlockLayout := calculateBlockLayout(
+	// 	screen,
+	// 	parentBlockLayout,
+	// 	boxProps,
+	// )
 
-	// Calculate the BoxLayout of any children
-	childrenWithLayout := calculateBoxLayoutForChildren(
-		screen,
-		boxProps,
-		innerBoxLayout,
-		children,
-	)
+	// // Calculate the BlockLayout of any children
+	// childrenWithLayout := calculateBlockLayoutForChildren(
+	// 	screen,
+	// 	boxProps,
+	// 	innerBlockLayout,
+	// 	children,
+	// )
 
 	return r.CreateScreenElement(
-		func(s tcell.Screen) r.BoxLayout {
+		calculateBlockLayout(boxProps),
+		func(s tcell.Screen, blockLayout r.BlockLayout) {
+			// debug.Spew(p)
+
 			if s == nil {
 				panic("Box can't render no screen")
 			}
@@ -55,15 +52,15 @@ func Box(p r.Properties) r.Element {
 				panic("Box can't render on a zero size screen")
 			}
 
+			// debug.Spew("CreateScreenElement Box", w, h, blockLayout)
 			render(
 				screen,
 				boxProps,
-				boxLayout,
+				blockLayout,
 			)
 
-			return boxLayout
 		},
 		r.Properties{},
-		childrenWithLayout,
+		children,
 	)
 }

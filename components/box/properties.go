@@ -19,46 +19,26 @@ type Properties struct {
 	// on top.
 	ZIndex int
 
-	// Flex Box
-
-	// The flex-direction CSS property sets how flex items are placed in the flex
-	// container defining the main axis and the direction (normal or reversed).
-	FlexDirection FlexDirection
-
-	// The flex-basis CSS property sets the initial main size of a flex item.
-	FlexBasis FlexBasis
-
-	// The flex-grow CSS property sets the flex grow factor of a flex item main
-	// size. It specifies how much of the remaining space in the flex container
-	// should be assigned to the item (the flex grow factor).
-	FlexGrow int
-
-	// The flex-shrink CSS property sets the flex shrink factor of a flex item.
-	// If the size of all flex items is larger than the flex container, items
-	// shrink to fit according to flex-shrink.
-	FlexShrink int // TODO
-
-	// The flex-wrap CSS property sets whether flex items are forced onto one
-	// line or can wrap onto multiple lines. If wrapping is allowed, it sets the
-	// direction that lines are stacked.
-	FlexWrap FlexWrapOption
-
 	Align Align
 
 	// Content Box
 	// If neither Width,Height or Rows,Columns are set, it will be calculated
 	// automatically  When set this is the percentage width and height.
 	// Ignored when Rows,Columns is not 0
-	Width, Height float64 // 0 = auto
+	Width, Height int // 0 = auto
 
 	// Set the size fixed in rows and columns.
 	// Ignored if 0
 	// If both Rows and Width are set Rows with be used.
 	Rows, Columns int
 
+	Grow int
+
 	// Padding Box
 	Padding Padding
 	Margin  Margin
+
+	Direction Direction
 
 	// Border
 	Border Border
@@ -67,6 +47,11 @@ type Properties struct {
 	Foreground tcell.Color
 
 	Overflow Overflow
+
+	MinHeight int
+	MinWidth  int
+
+	// TODO: maybe expand labels to allow them to be top/bottom left, center, right
 
 	// Title is a Label placed on the top border
 	Title Label
@@ -91,6 +76,15 @@ type Margin struct {
 	Left   int
 }
 
+type Direction int
+
+const (
+	DirectionRow Direction = iota
+	DirectionRowReverse
+	DirectionColumn
+	DirectionColumnReverse
+)
+
 type Border struct {
 	Style      BorderStyle
 	Background tcell.Color
@@ -113,34 +107,6 @@ const (
 	OverflowNone
 	OverflowScrollX
 	OverflowScrollY
-)
-
-// [ FlexBox Types ]------------------------------------------------------------
-
-type FlexDirection int
-
-const (
-	FlexDirectionRow FlexDirection = iota
-	FlexDirectionRowReverse
-	FlexDirectionColumn
-	FlexDirectionColumnReverse
-)
-
-type FlexBasis int
-
-const (
-	FlexBasisFill FlexBasis = iota
-	FlexBasisMaxContent
-	FlexBasisMinContent
-	FlexBasisFitContent
-)
-
-type FlexWrapOption int
-
-const (
-	FlexWrapNone FlexWrapOption = iota
-	FlexWrap
-	FlexWrapReverse
 )
 
 type Align int

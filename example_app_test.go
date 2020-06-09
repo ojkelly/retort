@@ -4,8 +4,8 @@ import (
 	// import tcell to get access to colors and event types
 	"github.com/gdamore/tcell"
 
-	"retort.dev/component"
-	"retort.dev/example"
+	"retort.dev/components/box"
+	example "retort.dev/example/components"
 	"retort.dev/r"
 )
 
@@ -19,11 +19,11 @@ func Example_app() {
 		r.CreateElement(
 			example.ClickableBox,
 			r.Properties{
-				component.BoxProps{
+				box.Properties{
 					Width:  100, // Make the root element fill the screen
 					Height: 100, // Make the root element fill the screen
-					Border: component.Border{
-						Style:      component.BorderStyleSingle,
+					Border: box.Border{
+						Style:      box.BorderStyleSingle,
 						Foreground: tcell.ColorWhite,
 					},
 				},
@@ -33,9 +33,9 @@ func Example_app() {
 				r.CreateElement(
 					example.ClickableBox,
 					r.Properties{
-						component.BoxProps{
-							Border: component.Border{
-								Style:      component.BorderStyleSingle,
+						box.Properties{
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
 							},
 						},
@@ -46,9 +46,9 @@ func Example_app() {
 				r.CreateElement(
 					example.ClickableBox,
 					r.Properties{
-						component.BoxProps{
-							Border: component.Border{
-								Style:      component.BorderStyleSingle,
+						box.Properties{
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
 								Foreground: tcell.ColorWhite,
 							},
 						},

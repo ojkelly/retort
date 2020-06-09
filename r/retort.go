@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"sync"
+	"runtime/debug"
 	"time"
 
 	"github.com/gdamore/tcell/encoding"
-	"retort.dev/debug"
+	d "retort.dev/debug"
 	"retort.dev/r/internal/quadtree"
 )
 
@@ -24,9 +24,9 @@ type retort struct {
 	hasChangesToRender bool
 	hasNewState        bool
 
-	rootBoxLayout BoxLayout
-	quadtree      quadtree.Quadtree
-	config        RetortConfiguration
+	rootBlockLayout BlockLayout
+	quadtree        quadtree.Quadtree
+	config          RetortConfiguration
 }
 
 // RetortConfiguration allows you to enable features your app
@@ -36,19 +36,13 @@ type RetortConfiguration struct {
 	// this is useful for automated testing
 	UseSimulationScreen bool
 
-	// UseDebugger to show a debug overlay with output from
-	// the retort.dev/debug#Log function
+	// UseDebugger to show a d overlay with output from
+	// the retort.dev/d#Log function
 	UseDebugger bool
 
 	// DisableMouse to prevent Mouse Events from being created
 	DisableMouse bool
 }
-
-var setStateChan chan ActionCreator
-
-var quitChan chan struct{}
-
-var c *RetortConfiguration = &RetortConfiguration{}
 
 // Retort is called with your root Component and any optional
 // configuration to begin running retort.
@@ -134,24 +128,33 @@ func Retort(root Element, config RetortConfiguration) {
 
 	w, h := screen.Size()
 
+	r.quadtree.Bounds.Width = w
+	r.quadtree.Bounds.Height = h
+
 	r.parseRetortConfiguration()
 
-	r.rootBoxLayout = BoxLayout{
+	r.rootBlockLayout = BlockLayout{
 		X:       0,
 		Y:       0,
 		Columns: w + 1, // +1 to account for zero-indexing
 		Rows:    h + 1, // +1 to account for zero-indexing
+		ZIndex:  0,
 	}
-	r.quadtree.Bounds.Width = w
-	r.quadtree.Bounds.Height = h
 
-	root.Properties = append(root.Properties, r.rootBoxLayout)
+	// TODO: this seems messy r.rootBlockLayout is copied to a bunch of places
+	r.root.BlockLayout = r.rootBlockLayout
+	r.root.InnerBlockLayout = r.rootBlockLayout
+
+	root.Properties = append(root.Properties, r.rootBlockLayout)
 
 	r.wipRoot = &fiber{
-		componentType: nothingComponent,
-		Properties:    Properties{Children{root}},
-		alternate:     r.currentRoot,
+		componentType:    nothingComponent,
+		Properties:       Properties{Children{root}},
+		alternate:        r.currentRoot,
+		BlockLayout:      r.root.BlockLayout,
+		InnerBlockLayout: r.root.InnerBlockLayout,
 	}
+
 	r.nextUnitOfWork = r.wipRoot
 	r.currentRoot = r.wipRoot.Clone()
 	r.hasChangesToRender = true
@@ -170,6 +173,18 @@ func Retort(root Element, config RetortConfiguration) {
 		shouldYield := false
 
 		var droppedFrames int
+
+		defer func() {
+
+			if false {
+				// TODO: wrap this is some config denoting prod mode
+				if r := recover(); r != nil {
+					d.Log("Panic", r)
+					debug.PrintStack()
+					close(quitChan)
+				}
+			}
+		}()
 
 	workloop:
 		for {
@@ -198,7 +213,6 @@ func Retort(root Element, config RetortConfiguration) {
 				deadline = time.Now().Add(14 * time.Millisecond)
 
 			case <-workTick.C:
-
 				if !r.hasChangesToRender {
 					// While we have work to do, this case is run very frequently
 					// But when we have no work to do it can consume considerable CPU time
@@ -209,9 +223,9 @@ func Retort(root Element, config RetortConfiguration) {
 					workTick.Stop()
 				}
 				if r.nextUnitOfWork != nil && !shouldYield {
-					start := time.Now()
+					// start := time.Now()
 					r.nextUnitOfWork = r.performWork(r.nextUnitOfWork)
-					debug.Spew("performWork: ", time.Since(start))
+					// d.Log("performWork: ", time.Since(start))
 
 					// yield with time to render
 					if time.Since(deadline) > 100*time.Nanosecond {
@@ -222,7 +236,7 @@ func Retort(root Element, config RetortConfiguration) {
 				if r.nextUnitOfWork == nil && r.wipRoot != nil {
 					start := time.Now()
 					r.commitRoot()
-					debug.Spew("commitRoot: ", time.Since(start))
+					d.Log("commitRoot: ", time.Since(start))
 					shouldYield = false
 				}
 
@@ -287,9 +301,6 @@ func (r *retort) performWork(f *fiber) *fiber {
 	return nil
 }
 
-var hookFiber *fiber
-var hookFiberLock = &sync.Mutex{}
-
 // [ Components ]---------------------------------------------------------------
 
 func (r *retort) updateComponent(f *fiber) {
@@ -308,7 +319,7 @@ func (r *retort) updateComponent(f *fiber) {
 		r.updateScreenComponent(f)
 	}
 
-	// debug.Spew("updateComponent", f)
+	// d.Log("updateComponent", f)
 	hookFiberLock.Lock()
 	hookFiber = nil
 	hookFiberLock.Unlock()
@@ -331,7 +342,7 @@ func (r *retort) updateElementComponent(f *fiber) {
 	r.wipFiber.hooks = nil
 
 	children := f.component(f.Properties)
-	// debug.Spew("updateElementComponent children", children)
+	// d.Log("updateElementComponent children", children)
 	r.reconcileChildren(f, []*fiber{children})
 }
 
@@ -375,8 +386,6 @@ func (r *retort) updateScreenComponent(f *fiber) {
 	).(Children)
 
 	r.reconcileChildren(f, children)
-	// debug.Spew("updateScreenComponent", f)
-
 }
 
 // [ Children ]-----------------------------------------------------------------
@@ -387,12 +396,9 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 	f.dirty = false
 
 	var oldFiber *fiber
-	var boxLayout BoxLayout
 	if r.wipFiber != nil && r.wipFiber.alternate != nil {
-		oldFiber = r.wipFiber.alternate.child
+		oldFiber = r.wipFiber.alternate
 	}
-
-	boxLayout = f.Properties.GetOptionalProperty(BoxLayout{}).(BoxLayout)
 
 	var prevSibling *fiber
 
@@ -415,28 +421,34 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 		if sameType { // Update
 			f.dirty = true
 			newFiber = &fiber{
-				dirty:          true,
-				componentType:  oldFiber.componentType,
-				component:      oldFiber.component,
-				Properties:     AddPropsIfNone(element.Properties, boxLayout),
-				parent:         f,
-				alternate:      oldFiber,
-				effect:         fiberEffectUpdate,
-				renderToScreen: element.renderToScreen,
+				dirty:            true,
+				componentType:    element.componentType,
+				component:        element.component,
+				Properties:       AddPropsIfNone(element.Properties, f.InnerBlockLayout),
+				parent:           f,
+				alternate:        oldFiber,
+				effect:           fiberEffectUpdate,
+				renderToScreen:   element.renderToScreen,
+				calculateLayout:  element.calculateLayout,
+				BlockLayout:      f.InnerBlockLayout,
+				InnerBlockLayout: f.InnerBlockLayout,
 			}
 		}
 
 		if element != nil && !sameType { // New Placement
 			f.dirty = true
 			newFiber = &fiber{
-				dirty:          true,
-				componentType:  element.componentType,
-				component:      element.component,
-				Properties:     AddPropsIfNone(element.Properties, boxLayout),
-				parent:         f,
-				alternate:      nil,
-				effect:         fiberEffectPlacement,
-				renderToScreen: element.renderToScreen,
+				dirty:            true,
+				componentType:    element.componentType,
+				component:        element.component,
+				Properties:       AddPropsIfNone(element.Properties, f.InnerBlockLayout),
+				parent:           f,
+				alternate:        nil,
+				effect:           fiberEffectPlacement,
+				renderToScreen:   element.renderToScreen,
+				calculateLayout:  element.calculateLayout,
+				BlockLayout:      f.InnerBlockLayout,
+				InnerBlockLayout: f.InnerBlockLayout,
 			}
 		}
 

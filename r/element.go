@@ -72,7 +72,6 @@ type (
 //      component.Box,
 //      r.Properties{
 //          component.BoxProps{
-//            FlexGrow:   1,
 //            Border: component.Border{
 //              Style:      component.BorderStyleSingle,
 //              Foreground: tcell.ColorWhite,
@@ -91,7 +90,7 @@ func CreateElement(
 	props Properties,
 	children Children,
 ) *fiber {
-	// debug.Spew("CreateElement", component, props, children)
+	// debug.Log("CreateElement", component, props, children)
 	if !checkPropTypesAreUnique(props) {
 		panic("props are not unique")
 	}
@@ -105,19 +104,16 @@ func CreateElement(
 	}
 }
 
-// CreateFragment is like CreateElement except you do not need a Component.
-func CreateFragment(props Properties, children Children) *fiber {
-	// debug.Spew("CreateFragment", props, children)
-	if !checkPropTypesAreUnique(props) {
-		panic("props are not unique")
-	}
+// CreateFragment is like CreateElement except you do not need a Component
+// or Properties. This is useful when you need to make Higher Order Components,
+// or other Components that wrap or compose yet more Components.
+func CreateFragment(children Children) *fiber {
 	return &fiber{
 		componentType: fragmentComponent,
 		component:     nil,
-		Properties: append(
-			props,
+		Properties: Properties{
 			children,
-		),
+		},
 	}
 }
 
@@ -129,22 +125,27 @@ func CreateFragment(props Properties, children Children) *fiber {
 // This walks the tree and finds ScreenElements and calls their
 // RenderToScreen function, passing in the current Screen.
 //
-// RenderToScreen needs to return a BoxLayout, which is used among
+// RenderToScreen needs to return a BlockLayout, which is used among
 // other things to direct Mouse Events to the right Component.
 //
 //	func Box(p r.Properties) r.Element {
 //		return r.CreateScreenElement(
-//			func(s tcell.Screen) r.BoxLayout {
-//				return boxLayout
+//			func(s tcell.Screen) r.BlockLayout {
+//				return BlockLayout
 //			},
 //			nil,
 //		)
 //	}
-func CreateScreenElement(render RenderToScreen, props Properties, children Children) *fiber {
-	// debug.Spew("CreateScreenElement", render)
+func CreateScreenElement(
+	calculateLayout CalculateLayout,
+	render RenderToScreen,
+	props Properties,
+	children Children,
+) *fiber {
 	return &fiber{
-		componentType:  screenComponent,
-		renderToScreen: &render,
+		componentType:   screenComponent,
+		calculateLayout: &calculateLayout,
+		renderToScreen:  &render,
 		Properties: append(
 			props,
 			children,
@@ -187,7 +188,7 @@ func checkPropTypesAreUnique(props Properties) bool {
 //      component.Box,
 //      r.Properties{
 //          component.BoxProps{
-//            FlexGrow:   1,
+
 //            Border: component.Border{
 //              Style:      component.BorderStyleSingle,
 //              Foreground: tcell.ColorWhite,
@@ -206,6 +207,7 @@ func (props Properties) GetProperty(
 			return p
 		}
 	}
+	// debug.Spew(props)
 	panic(errorMessage)
 }
 
@@ -224,7 +226,6 @@ func (props Properties) GetProperty(
 //  func Wrapper(p r.Properties) r.Element {
 //    boxProps := p.GetOptionalProperty(
 //      component.BoxProps{
-//        FlexGrow:   1,
 //        Border: component.Border{
 //          Style:      component.BorderStyleSingle,
 //          Foreground: tcell.ColorWhite,

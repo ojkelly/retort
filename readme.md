@@ -6,3 +6,11 @@
 A reactive terminal user interface library for golang, built ontop of tcell.
 
 Full documentation is available at https://godoc.org/retort.dev
+
+## Developing
+
+To run the example app:
+
+```
+make dev
+```

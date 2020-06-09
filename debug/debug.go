@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	// "github.com/davecgh/go-spew/spew"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 const debugLogPath = "debug.log"
@@ -23,20 +24,19 @@ func init() {
 	// defer f.Close()
 }
 
-func Spew(message ...interface{}) {
-	// return
-	// start := time.Now()
-
-	// go func() {
+func Log(message ...interface{}) {
 	debugMutex.Lock()
 	debugFile.WriteString(debugLineBreak)
 
 	debugFile.WriteString(fmt.Sprint(message...))
-	// spew.Fdump(debugFile, message...)
 
-	// debugFile.WriteString(fmt.Sprintf("debug print time %s", time.Since(start)))
 	debugMutex.Unlock()
-	// }()
+}
 
-	// fmt.Println(message...)
+func Spew(message ...interface{}) {
+	debugMutex.Lock()
+	debugFile.WriteString(debugLineBreak)
+
+	spew.Fdump(debugFile, message...)
+	debugMutex.Unlock()
 }
