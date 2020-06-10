@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
@@ -139,7 +140,10 @@ func Text(p r.Properties) r.Element {
 
 	if boxProps.Overflow != box.OverflowNone {
 		props = append(props, mouseEventHandler)
+
 	}
+
+	debug.Spew("text", props)
 
 	return r.CreateElement(
 		box.Box,
@@ -161,8 +165,9 @@ func Text(p r.Properties) r.Element {
 						panic("Text can't render on a zero size screen")
 					}
 
-					// debug.Spew("render text", blockLayout)
-					renderText(
+					debug.Spew("render text", blockLayout)
+
+					render(
 						s,
 						textProps,
 						blockLayout,

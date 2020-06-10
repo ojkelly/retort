@@ -6,10 +6,11 @@ import (
 	"github.com/gdamore/tcell"
 	runewidth "github.com/mattn/go-runewidth"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
-func renderText(
+func render(
 	s tcell.Screen,
 	props Properties,
 	layout r.BlockLayout,
@@ -110,6 +111,7 @@ func breakText(
 }
 
 func renderLine(s tcell.Screen, style tcell.Style, x, y int, str string) {
+	debug.Spew("renderLine", str)
 	i := 0
 	var deferred []rune
 	dwidth := 0

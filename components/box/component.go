@@ -22,26 +22,9 @@ func Box(p r.Properties) r.Element {
 		r.Children{},
 	).(r.Children)
 
-	// // Calculate the BlockLayout of this Box
-	// blockLayout, innerBlockLayout := calculateBlockLayout(
-	// 	screen,
-	// 	parentBlockLayout,
-	// 	boxProps,
-	// )
-
-	// // Calculate the BlockLayout of any children
-	// childrenWithLayout := calculateBlockLayoutForChildren(
-	// 	screen,
-	// 	boxProps,
-	// 	innerBlockLayout,
-	// 	children,
-	// )
-
 	return r.CreateScreenElement(
 		calculateBlockLayout(boxProps),
 		func(s tcell.Screen, blockLayout r.BlockLayout) {
-			// debug.Spew(p)
-
 			if s == nil {
 				panic("Box can't render no screen")
 			}
@@ -52,7 +35,6 @@ func Box(p r.Properties) r.Element {
 				panic("Box can't render on a zero size screen")
 			}
 
-			// debug.Spew("CreateScreenElement Box", w, h, blockLayout)
 			render(
 				screen,
 				boxProps,

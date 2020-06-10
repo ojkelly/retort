@@ -37,13 +37,13 @@ func MenuItem(p r.Properties) r.Element {
 			Left:  1,
 			Right: 1,
 		},
-		MinHeight: 10,
+		// MinHeight: 10,
 		Border: box.Border{
 			Style:      box.BorderStyleSingle,
 			Foreground: t.Border,
 		},
 	}
-	debug.Log("menu item loading", loading)
+	debug.Log("menu item loading ", loading, story)
 
 	if loading {
 		return r.CreateElement(
@@ -81,13 +81,16 @@ func MenuItem(p r.Properties) r.Element {
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
-			boxProps,
+			box.Properties{
+				// Direction: box.DirectionRow,
+				Grow: 1,
+			},
 		},
 		r.Children{
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{},
+					box.Properties{Grow: 1},
 					text.Properties{
 						Value:      story.Title,
 						Foreground: t.Foreground,
@@ -99,7 +102,7 @@ func MenuItem(p r.Properties) r.Element {
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{},
+					box.Properties{Grow: 1},
 					text.Properties{
 						Value: fmt.Sprintf(
 							"Score: %d\nComments: %d",
