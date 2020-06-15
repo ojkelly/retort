@@ -8,7 +8,6 @@ import (
 	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 )
 
 type Properties struct {
@@ -41,7 +40,7 @@ func Menu(p r.Properties) r.Element {
 
 	stories := hn.UseTopStories()
 
-	debug.Spew("stories", stories)
+	// debug.Spew("stories", stories)
 
 	var items r.Children
 	if stories.Data != nil &&
@@ -76,12 +75,13 @@ func Menu(p r.Properties) r.Element {
 				Title: box.Label{
 					Value: title,
 				},
+				Direction: box.DirectionColumn,
 				Footer: box.Label{
 					Value: "Hacker News",
 					Wrap:  box.LabelWrapSquareBracket,
 				},
 				Overflow:  box.OverflowScrollX,
-				MinHeight: 9,
+				MinHeight: 5,
 			},
 			onClick,
 		},

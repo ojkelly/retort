@@ -186,6 +186,7 @@ func Retort(root Element, config RetortConfiguration) {
 			}
 		}()
 
+		// TODO: run again if screen size changes
 	workloop:
 		for {
 			select {

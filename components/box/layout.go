@@ -207,20 +207,22 @@ func calculateBlockLayout(
 				rows := 0
 				columns := 0
 
-				// Calculate the size of this block based on the direction of the parent
-				switch props.Direction {
-				case DirectionRow:
-					columns = growDivision * grow
-					rows = innerBlockLayout.Rows
-				case DirectionRowReverse:
-					columns = growDivision * grow
-					rows = innerBlockLayout.Rows
-				case DirectionColumn:
-					columns = innerBlockLayout.Columns
-					rows = growDivision * grow
-				case DirectionColumnReverse:
-					columns = innerBlockLayout.Columns
-					rows = growDivision * grow
+				if !c.FixedColumns || !c.FixedRows {
+					// Calculate the size of this block based on the direction of the parent
+					switch props.Direction {
+					case DirectionRow:
+						columns = growDivision * grow
+						rows = innerBlockLayout.Rows
+					case DirectionRowReverse:
+						columns = growDivision * grow
+						rows = innerBlockLayout.Rows
+					case DirectionColumn:
+						columns = innerBlockLayout.Columns
+						rows = growDivision * grow
+					case DirectionColumnReverse:
+						columns = innerBlockLayout.Columns
+						rows = growDivision * grow
+					}
 				}
 
 				// debug.Spew("c grow", rows, columns, grow, growDivision)
@@ -233,7 +235,6 @@ func calculateBlockLayout(
 					columns = 0
 				}
 
-				// TODO: implement minHeight/width for children
 				// if props.MinHeight != 0 {
 				// 	rows = intmath.Min(rows, props.MinHeight)
 				// }
@@ -274,7 +275,6 @@ func calculateBlockLayout(
 				}
 			}
 
-			return
 		case r.CalculateLayoutStageFinal:
 
 		}

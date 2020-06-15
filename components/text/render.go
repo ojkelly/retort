@@ -16,15 +16,11 @@ func render(
 	layout r.BlockLayout,
 	offsetX, offsetY int,
 ) {
-
+	debug.Spew("render", props, layout)
 	style := tcell.StyleDefault
 	style = style.Foreground(props.Foreground)
 
-	var lines []string
-	for _, text := range strings.Split(props.Value, "\n\n") {
-		lines = append(lines, breakText(text, props, layout)...)
-		lines = append(lines, "")
-	}
+	lines := breakLines(props, layout)
 
 	scrollLimit := int(float64(len(lines)) / 1.2)
 	offset := 0
@@ -44,6 +40,16 @@ func render(
 
 		renderLine(s, style, layout.X, layout.Y+i, line)
 	}
+}
+
+func breakLines(
+	props Properties,
+	layout r.BlockLayout,
+) (lines []string) {
+	for _, text := range strings.Split(props.Value, "\n") {
+		lines = append(lines, breakText(text, props, layout)...)
+	}
+	return
 }
 
 // breakText into rows to text that can be printed.
@@ -111,7 +117,7 @@ func breakText(
 }
 
 func renderLine(s tcell.Screen, style tcell.Style, x, y int, str string) {
-	debug.Spew("renderLine", str)
+	// debug.Spew("renderLine", str)
 	i := 0
 	var deferred []rune
 	dwidth := 0

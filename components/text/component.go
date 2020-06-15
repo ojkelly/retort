@@ -6,7 +6,6 @@ import (
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
@@ -143,7 +142,7 @@ func Text(p r.Properties) r.Element {
 
 	}
 
-	debug.Spew("text", props)
+	// debug.Spew("text", props)
 
 	return r.CreateElement(
 		box.Box,
@@ -153,7 +152,7 @@ func Text(p r.Properties) r.Element {
 		},
 		r.Children{
 			r.CreateScreenElement(
-				calculateBlockLayout(boxProps),
+				calculateBlockLayout(textProps, boxProps),
 				func(s tcell.Screen, blockLayout r.BlockLayout) {
 					if s == nil {
 						panic("Text can't render no screen")
@@ -165,7 +164,7 @@ func Text(p r.Properties) r.Element {
 						panic("Text can't render on a zero size screen")
 					}
 
-					debug.Spew("render text", blockLayout)
+					// debug.Spew("render text", blockLayout)
 
 					render(
 						s,
