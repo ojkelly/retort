@@ -3,12 +3,12 @@ package menu
 import (
 	"fmt"
 
+	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
 	"retort.dev/components/text"
 	"retort.dev/example/hackernews/components/common/hooks/hn"
 	"retort.dev/example/hackernews/components/theme"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 )
 
 type MenuItemProps struct {
@@ -37,12 +37,19 @@ func MenuItem(p r.Properties) r.Element {
 			Left:  1,
 			Right: 1,
 		},
-		MinHeight: 10,
-		Border: box.Border{
-			Style:      box.BorderStyleSingle,
-			Foreground: t.Border,
-		},
 	}
+	// debug.Log("menu item loading ", loading, props.Id)
+
+	// onClick := func(
+	// 	isPrimary,
+	// 	isSecondary bool,
+	// 	buttonMask tcell.ButtonMask,
+	// ) r.EventMouseClickRelease {
+	// 	if isPrimary {
+	// 		props.SetTheme(theme.White)
+	// 	}
+	// 	return func() {}
+	// }
 
 	if loading {
 		return r.CreateElement(
@@ -59,7 +66,7 @@ func MenuItem(p r.Properties) r.Element {
 	}
 
 	if err != nil {
-		debug.Log("menut item err", err)
+		// debug.Log("menu item err", err)
 		return r.CreateElement(
 			text.Text,
 			r.Properties{
@@ -80,17 +87,27 @@ func MenuItem(p r.Properties) r.Element {
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
-			boxProps,
+			box.Properties{
+				Direction: box.DirectionColumn,
+				Grow:      1,
+				Padding: box.Padding{
+					Left:  1,
+					Right: 1,
+				},
+				Border: box.Border{
+					Foreground: tcell.ColorGray,
+					Style:      box.BorderStyleSingle,
+				},
+			},
 		},
 		r.Children{
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{},
+					box.Properties{Grow: 1},
 					text.Properties{
 						Value:      story.Title,
 						Foreground: t.Foreground,
-						// WordBreak:  text.BreakAll,
 					},
 				},
 				nil,
@@ -98,10 +115,10 @@ func MenuItem(p r.Properties) r.Element {
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{},
+					box.Properties{Grow: 1},
 					text.Properties{
 						Value: fmt.Sprintf(
-							"Score: %d\nComments: %d",
+							"Score: %d Comments: %d",
 							story.Score,
 							story.Descendants,
 						),

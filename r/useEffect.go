@@ -2,8 +2,6 @@ package r
 
 import (
 	"reflect"
-
-	"retort.dev/r/debug"
 )
 
 type (
@@ -196,7 +194,6 @@ func hasDepsChanged(
 	// 	}
 	// }
 
-	debug.Log("hasDepsChanged ", changed)
 	return
 }
 

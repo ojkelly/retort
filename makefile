@@ -18,6 +18,7 @@ demo:
 
 # Build the hn app
 hn:
+	rm debug.log || true
 	go run example/hackernews/main.go
 
 

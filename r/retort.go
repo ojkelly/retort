@@ -186,6 +186,7 @@ func Retort(root Element, config RetortConfiguration) {
 			}
 		}()
 
+		// TODO: run again if screen size changes
 	workloop:
 		for {
 			select {
@@ -397,7 +398,7 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 
 	var oldFiber *fiber
 	if r.wipFiber != nil && r.wipFiber.alternate != nil {
-		oldFiber = r.wipFiber.alternate
+		oldFiber = r.wipFiber.alternate.child
 	}
 
 	var prevSibling *fiber

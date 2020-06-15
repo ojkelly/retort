@@ -49,8 +49,8 @@ func UseStory(id int) (
 	if storyCache.Update == nil {
 		return
 	}
-	r.UseEffect(func() r.EffectCancel {
 
+	r.UseEffect(func() r.EffectCancel {
 		var story *hnclient.Story
 		var needToFetch bool
 
@@ -70,6 +70,11 @@ func UseStory(id int) (
 		if cachedStory.Loading {
 			needToFetch = false
 		}
+
+		if cachedStory.Story == nil {
+			needToFetch = true
+		}
+		// debug.Spew("needToFetch", needToFetch, cachedStory, ok)
 
 		// If we need to update, go fetch it
 		if needToFetch {

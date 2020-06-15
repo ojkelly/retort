@@ -146,6 +146,9 @@ func (r *retort) calculateLayout(f *fiber) {
 
 		f.InnerBlockLayout = innerBlockLayout
 
+		r.calculateLayout(f.child)
+		r.calculateLayout(f.sibling)
+
 		children := f.ImmeditateChildren()
 
 		if len(children) > 0 {

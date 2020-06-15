@@ -4,7 +4,6 @@ import (
 	"sort"
 
 	"github.com/gdamore/tcell"
-	"retort.dev/r/debug"
 )
 
 // RenderToScreen is the callback passed to create a Screen Element
@@ -46,13 +45,9 @@ func (r *retort) commitRoot() {
 	// }
 
 	// w, h := screen.Size()
-	debug.Log("Render: Calculate Layout")
 
 	r.calculateLayout(r.wipRoot)
 
-	// debug.Spew(r.wipRoot)
-
-	debug.Log("Render: Create Display List")
 	// Draw
 	// TODO: conver this to a 2 step, first create a DisplayList (a list of commands for what to draw)
 	// then optmise the list, by sorting by z-index, and removing commands that are occuluded
@@ -61,9 +56,6 @@ func (r *retort) commitRoot() {
 
 	displayList.Sort()
 
-	debug.Spew("DisplayList", displayList)
-
-	debug.Log("Render: Paint")
 	r.paint(displayList)
 
 	screen.Show()
@@ -81,7 +73,7 @@ func (r *retort) commitRoot() {
 	r.hasChangesToRender = false
 
 	hookFiber = nil
-	debug.Log("committed root")
+
 }
 
 // commitWork walks the tree and commits any fiber updates

@@ -139,7 +139,10 @@ func Text(p r.Properties) r.Element {
 
 	if boxProps.Overflow != box.OverflowNone {
 		props = append(props, mouseEventHandler)
+
 	}
+
+	// debug.Spew("text", props)
 
 	return r.CreateElement(
 		box.Box,
@@ -149,7 +152,7 @@ func Text(p r.Properties) r.Element {
 		},
 		r.Children{
 			r.CreateScreenElement(
-				calculateBlockLayout(boxProps),
+				calculateBlockLayout(textProps, boxProps),
 				func(s tcell.Screen, blockLayout r.BlockLayout) {
 					if s == nil {
 						panic("Text can't render no screen")
@@ -162,7 +165,8 @@ func Text(p r.Properties) r.Element {
 					}
 
 					// debug.Spew("render text", blockLayout)
-					renderText(
+
+					render(
 						s,
 						textProps,
 						blockLayout,

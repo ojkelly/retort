@@ -61,8 +61,7 @@ func App(p r.Properties) r.Element {
 								menu.Menu,
 								r.Properties{
 									box.Properties{
-										Width:  20,
-										Height: 100,
+										Grow: 1,
 									},
 									menu.Properties{
 										SetTheme: setTheme,
@@ -75,8 +74,7 @@ func App(p r.Properties) r.Element {
 								story.Story,
 								r.Properties{
 									box.Properties{
-										Width:  80,
-										Height: 100,
+										Grow: 3,
 									},
 								},
 								nil,

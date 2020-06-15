@@ -24,7 +24,7 @@
   <body>
     <header>
       <nav>
-        <a href="/" style="color: red;">💢 Retort</a>
+        <a href="/" style="color: var(--color);">💢 Retort</a>
         <ul>
           <li>
             <a href="https://pkg.go.dev/retort.dev" target="_blank">Documentation &#8599;</a>
@@ -35,14 +35,44 @@
         </ul>
       </nav>
       <img alt="Logo" src="gopher.svg" height="300" />
-      <h1>Retort</h1>
+      <h1 style="color: var(--color); font-size: 4rem; margin: 0.1em;">
+        Retort
+      </h1>
+      <sup>Work In Progress</sup>
       <p>A Go library for building terminal user interfaces</p>
       <br />
       <p>
-        <a href="https://pkg.go.dev/retort.dev"> <b>Get Started &#8599;</b> </a
-        ><a href="https://pkg.go.dev/retort.dev"><i>Take the Tutorial &#8599;</i></a>
+        <a href="https://pkg.go.dev/retort.dev"> <b>Get Started</b> </a
+        ><a href="https://github.com/retort-dev/retort/tree/master/example/hackernews"
+          ><i>Example App</i></a
+        >
       </p>
     </header>
+    <main>
+      <section>
+        <aside>
+          <h3>Declaritive</h3>
+          <p>
+            Describe how your UI should look and behave, and Retort will update and render when
+            there are changes.
+          </p>
+        </aside>
+
+        <aside>
+          <h3>Component-Based</h3>
+          <p>
+            Compose encapsulated components that manage their own state, into more complex UIs.
+          </p>
+        </aside>
+        <aside>
+          <h3>Hooks</h3>
+          <p>
+            Add behaviours to your components with hooks to add local state, async functionality and
+            more.
+          </p>
+        </aside>
+      </section>
+    </main>
     <footer>
       <hr />
       <p style="text-align: center; font-size: 0.8rem; color: var(--color-text-secondary);">
@@ -50,7 +80,9 @@
       </p>
       <p style="text-align: center; font-size: 0.8rem; color: var(--color-text-secondary);">
         Made with ☕ in Melbourne, Australia <br />by
-        <a href="https://www.owenkelly.com.au"> Owen Kelly</a>
+        <a href="https://www.owenkelly.com.au" target="_blank"> Owen Kelly &#8599;</a>
+        <br />
+        <a href="https://github.com/retort-dev/retort/blob/master/LICENSE">MIT</a>
       </p>
     </footer>
   </body>
