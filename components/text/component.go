@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
@@ -16,28 +17,26 @@ type boxState struct {
 
 // Text is the basic building block for a retort app.
 // Text implements the Text Model, see Properties
-func Text(p r.Properties) r.Element {
-	// screen := r.UseScreen()
-
+func Text(props r.Properties) r.Element {
 	// Get our Properties
-	textProps := p.GetProperty(
+	textProps := props.GetProperty(
 		Properties{},
 		"Text requires Properties",
 	).(Properties)
 
 	// Get our Properties
-	boxProps := p.GetOptionalProperty(
+	boxProps := props.GetOptionalProperty(
 		box.Properties{},
 	).(box.Properties)
 
 	// Get our BlockLayout
-	parentBlockLayout := p.GetProperty(
+	parentBlockLayout := props.GetProperty(
 		r.BlockLayout{},
 		"Text requires a parent BlockLayout.",
 	).(r.BlockLayout)
 
 	// Get any children
-	children := p.GetOptionalProperty(
+	children := props.GetOptionalProperty(
 		r.Children{},
 	).(r.Children)
 	if len(children) != 0 {
@@ -51,17 +50,10 @@ func Text(p r.Properties) r.Element {
 		boxState{},
 	).(boxState)
 
-	// // Calculate the BlockLayout of this Text
-	// BlockLayout := calculateBlockLayout(
-	// 	screen,
-	// 	parentBlockLayout,
-	// 	textProps,
-	// )
-
 	mouseEventHandler := func(up, down, left, right bool) {
 		now := time.Now()
 
-		if now.Sub(state.lastUpdated) < 16*time.Millisecond {
+		if now.Sub(state.lastUpdated) < 2*time.Millisecond {
 			// throttle to one update a second
 			return
 		}
@@ -104,7 +96,7 @@ func Text(p r.Properties) r.Element {
 				// When the offset is near the top, we just set the value
 				// this prevents issues with the float64 conversion below
 				// that was casuing jankiness
-				if state.OffsetX < 3 {
+				if state.OffsetX < 2 {
 					offsetX = state.OffsetX + offsetXDelta
 				} else {
 					offsetX = intmath.Min(
@@ -116,7 +108,7 @@ func Text(p r.Properties) r.Element {
 
 			if boxProps.Overflow == box.OverflowScroll ||
 				boxProps.Overflow == box.OverflowScrollY {
-				if offsetY < 3 {
+				if offsetY < 2 {
 					offsetY = state.OffsetY + offsetYDelta
 				} else {
 					offsetY = intmath.Min(
@@ -135,21 +127,17 @@ func Text(p r.Properties) r.Element {
 		})
 	}
 
-	props := r.Properties{}
-
-	if boxProps.Overflow != box.OverflowNone {
-		props = append(props, mouseEventHandler)
-
+	p := r.Properties{
+		boxProps,
 	}
-
-	// debug.Spew("text", props)
+	debug.Spew(boxProps)
+	if boxProps.Overflow != box.OverflowNone {
+		p = append(p, mouseEventHandler)
+	}
 
 	return r.CreateElement(
 		box.Box,
-		r.Properties{
-			boxProps,
-			mouseEventHandler,
-		},
+		p,
 		r.Children{
 			r.CreateScreenElement(
 				calculateBlockLayout(textProps, boxProps),
@@ -164,11 +152,10 @@ func Text(p r.Properties) r.Element {
 						panic("Text can't render on a zero size screen")
 					}
 
-					// debug.Spew("render text", blockLayout)
-
 					render(
 						s,
 						textProps,
+						boxProps,
 						blockLayout,
 						state.OffsetX, state.OffsetY,
 					)

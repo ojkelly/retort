@@ -5,23 +5,27 @@ import (
 
 	"github.com/gdamore/tcell"
 	runewidth "github.com/mattn/go-runewidth"
+	"retort.dev/components/box"
 	"retort.dev/r"
+	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
 func render(
 	s tcell.Screen,
 	props Properties,
+	boxProps box.Properties,
 	layout r.BlockLayout,
 	offsetX, offsetY int,
 ) {
-
+	debug.Spew(offsetX, offsetY)
 	style := tcell.StyleDefault
 	style = style.Foreground(props.Foreground)
 
 	lines := breakLines(props, layout)
 
 	scrollLimit := int(float64(len(lines)) / 1.2)
+
 	offset := 0
 	if offsetX < len(lines) {
 		offset = offsetX
@@ -33,11 +37,12 @@ func render(
 	linesToRender := lines[offset:]
 
 	for i, line := range linesToRender {
-		if i > layout.Rows {
+		if i > layout.Rows-2 {
 			return
 		}
 
 		renderLine(s, style, layout.X, layout.Y+i, line)
+
 	}
 }
 
@@ -102,21 +107,19 @@ func breakText(
 		}
 
 		line = line + word + " "
-		colsRemaining = colsRemaining - len(word) - 1
+		colsRemaining = colsRemaining - len(word) - 2
 		if colsRemaining < 0 {
 			colsRemaining = 0
 		}
 	}
 
-	// TODO: there's probably a better way
-	// save last line
 	lines = append(lines, line)
+	lines = append(lines, "") // represents the /n we split on in breakText
 
 	return
 }
 
 func renderLine(s tcell.Screen, style tcell.Style, x, y int, str string) {
-	// debug.Spew("renderLine", str)
 	i := 0
 	var deferred []rune
 	dwidth := 0

@@ -34,8 +34,8 @@ const (
 type WordBreak int
 
 const (
-	// Normal Use the default line break rule.
-	Normal WordBreak = iota
+	// BreakNone Use the default line break rule.
+	BreakNone WordBreak = iota
 	// BreakAll To prevent overflow, word breaks should be inserted between any
 	// two characters (excluding Chinese/Japanese/Korean text).
 	BreakAll

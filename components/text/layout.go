@@ -4,7 +4,6 @@ import (
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 )
 
 func calculateBlockLayout(
@@ -15,11 +14,11 @@ func calculateBlockLayout(
 		s tcell.Screen,
 		stage r.CalculateLayoutStage,
 		parentBlockLayout r.BlockLayout,
-		children r.BlockLayouts,
+		children []r.BlockLayoutWithProperties,
 	) (
 		outerBlockLayout r.BlockLayout,
 		innerBlockLayout r.BlockLayout,
-		childrenBlockLayouts r.BlockLayouts,
+		childrenBlockLayouts []r.BlockLayoutWithProperties,
 	) {
 		outerBlockLayout = parentBlockLayout
 		innerBlockLayout = parentBlockLayout
@@ -29,15 +28,15 @@ func calculateBlockLayout(
 		switch stage {
 		case r.CalculateLayoutStageInitial:
 
-			lines := breakLines(textProps, innerBlockLayout)
-			rows := len(lines)
+			// lines := breakLines(textProps, innerBlockLayout)
+			// rows := len(lines)
 
-			debug.Spew("rows", rows, textProps, innerBlockLayout)
+			// debug.Spew("rows", rows, textProps, innerBlockLayout)
 
-			outerBlockLayout.Rows = rows
-			outerBlockLayout.FixedRows = true
-			innerBlockLayout.Rows = rows
-			innerBlockLayout.FixedRows = true
+			// outerBlockLayout.Rows = rows
+			// outerBlockLayout.FixedRows = true
+			// innerBlockLayout.Rows = rows
+			// innerBlockLayout.FixedRows = true
 		case r.CalculateLayoutStageWithChildren:
 		case r.CalculateLayoutStageFinal:
 

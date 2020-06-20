@@ -103,8 +103,8 @@ const (
 type Overflow int
 
 const (
-	OverflowScroll Overflow = iota
-	OverflowNone
+	OverflowNone Overflow = iota
+	OverflowScroll
 	OverflowScrollX
 	OverflowScrollY
 )
