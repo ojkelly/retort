@@ -11,6 +11,9 @@ var c *RetortConfiguration = &RetortConfiguration{}
 // quitChan will quit the application when anythin is sent to it
 var quitChan chan struct{}
 
+// resizeChan notifies when the screen has resized, and needs to redraw
+var resizeChan chan struct{}
+
 // [ Hooks ]--------------------------------------------------------------------
 
 // hookIndex keeps track of the currently used hook, this is a proxy for

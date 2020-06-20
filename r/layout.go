@@ -53,6 +53,10 @@ type BlockLayout struct {
 }
 
 type BlockLayouts = []BlockLayout
+type BlockLayoutWithProperties struct {
+	BlockLayout BlockLayout
+	Properties  Properties
+}
 
 type CalculateLayoutStage int
 
@@ -80,11 +84,11 @@ type CalculateLayout func(
 	s tcell.Screen,
 	stage CalculateLayoutStage,
 	parentBlockLayout BlockLayout,
-	children BlockLayouts,
+	children []BlockLayoutWithProperties,
 ) (
 	blockLayout BlockLayout,
 	innerBlockLayout BlockLayout,
-	childrenBlockLayouts BlockLayouts,
+	childrenBlockLayouts []BlockLayoutWithProperties,
 )
 
 // reconcileQuadTree updates the quadtree with our new layout, and provides
@@ -152,22 +156,28 @@ func (r *retort) calculateLayout(f *fiber) {
 		children := f.ImmeditateChildren()
 
 		if len(children) > 0 {
-			childrenBlockLayouts := []BlockLayout{}
+			childrenBlockLayoutsWithProperties := []BlockLayoutWithProperties{}
 
 			for _, c := range children {
 				// debug.Log(fmt.Sprintf("c address %p", c))
-				cbl := BlockLayout{}
-				if c != nil {
-					cbl = c.BlockLayout
+				cbl := BlockLayoutWithProperties{
+					BlockLayout: BlockLayout{},
+					Properties:  Properties{},
 				}
-				childrenBlockLayouts = append(childrenBlockLayouts, cbl)
+				if c != nil {
+					cbl = BlockLayoutWithProperties{
+						BlockLayout: c.BlockLayout,
+						Properties:  c.Properties,
+					}
+					childrenBlockLayoutsWithProperties = append(childrenBlockLayoutsWithProperties, cbl)
+				}
 			}
 
-			_, _, childrenBlockLayouts = calcLayout(
+			_, _, childrenBlockLayouts := calcLayout(
 				screen,
 				CalculateLayoutStageWithChildren,
 				f.InnerBlockLayout,
-				childrenBlockLayouts,
+				childrenBlockLayoutsWithProperties,
 			)
 
 			// Put the updated blockLayouts back onto the children
@@ -176,8 +186,8 @@ func (r *retort) calculateLayout(f *fiber) {
 					continue
 				}
 
-				c.BlockLayout = childrenBlockLayouts[i]
-				c.InnerBlockLayout = childrenBlockLayouts[i]
+				c.BlockLayout = childrenBlockLayouts[i].BlockLayout
+				c.InnerBlockLayout = childrenBlockLayouts[i].BlockLayout
 			}
 		}
 

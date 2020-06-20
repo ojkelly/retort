@@ -10,6 +10,10 @@ dev:
 test:
 	go test ./...
 
+# go get github.com/dnephin/filewatcher
+watch-demo:
+	filewatcher -x .git make demo
+
 # Build the example app
 demo:
 	rm debug.log || true
@@ -37,12 +41,6 @@ docs:
 serve:
 	npx serve .
 
-# Install watchman on macOS
-# also upgrade pywatchman, to one that works with python3
-# https://github.com/facebook/watchman/issues/631#issuecomment-541255161
-install-watchman-macos:
-	pip install pywatchman
-	brew install watchman
 
 prepare-site:
 	find ./** -type d -exec cp redirect.html {}/index.html \;

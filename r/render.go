@@ -44,8 +44,6 @@ func (r *retort) commitRoot() {
 	// 	displayList = append(displayList, r.processDisplayCommands(deletion)...)
 	// }
 
-	// w, h := screen.Size()
-
 	r.calculateLayout(r.wipRoot)
 
 	// Draw
@@ -58,7 +56,12 @@ func (r *retort) commitRoot() {
 
 	r.paint(displayList)
 
-	screen.Show()
+	if r.requiresScreenSync {
+		screen.Sync()
+		r.requiresScreenSync = false
+	} else {
+		screen.Show()
+	}
 
 	// Update effects
 	r.processEffects(r.wipRoot)

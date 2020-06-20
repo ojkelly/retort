@@ -24,8 +24,6 @@ func main() {
 			box.Box,
 			r.Properties{
 				box.Properties{
-					// Width:     100,
-					// Height:    100,
 					Direction: box.DirectionColumn,
 					Border: box.Border{
 						Style:      box.BorderStyleSingle,
@@ -37,57 +35,60 @@ func main() {
 				},
 			},
 			r.Children{
-				// r.CreateElement(
-				// 	box.Box,
-				// 	r.Properties{
-				// 		box.Properties{
-				// 			Foreground: tcell.ColorBeige,
-				// 			Grow:       3,
-				// 			Border: box.Border{
-				// 				Style:      box.BorderStyleSingle,
-				// 				Foreground: tcell.ColorWhite,
-				// 			},
-				// 			Padding: box.Padding{
-				// 				Top:    0,
-				// 				Right:  0,
-				// 				Bottom: 0,
-				// 				Left:   0,
-				// 			},
-				// 			Title: box.Label{
-				// 				Value: "Example",
-				// 			},
-				// 			ZIndex:   5,
-				// 			Overflow: box.OverflowScrollX,
-				// 		},
-				// 	},
-				// 	r.Children{
-				// 		r.CreateElement(
-				// 			text.Text,
-				// 			r.Properties{
-				// 				text.Properties{
-				// 					Value:      loremIpsum,
-				// 					WordBreak:  text.BreakAll,
-				// 					Foreground: tcell.ColorWhite,
-				// 				},
-				// 			},
-				// 			nil,
-				// 		),
-				// 	},
-				// ),
-				// r.CreateElement(
-				// 	components.ClickableBox,
-				// 	r.Properties{
-				// 		box.Properties{
-				// 			Grow:       1,
-				// 			Foreground: tcell.ColorCadetBlue,
-				// 			Border: box.Border{
-				// 				Style:      box.BorderStyleSingle,
-				// 				Foreground: tcell.ColorWhite,
-				// 			},
-				// 		},
-				// 	},
-				// 	nil,
-				// ),
+				r.CreateElement(
+					box.Box,
+					r.Properties{
+						box.Properties{
+							Foreground: tcell.ColorBeige,
+							Grow:       3,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
+								Foreground: tcell.ColorWhite,
+							},
+							// Padding: box.Padding{
+							// 	Top:    0,
+							// 	Right:  0,
+							// 	Bottom: 0,
+							// 	Left:   0,
+							// },
+							Title: box.Label{
+								Value: "Grow 3 - with text",
+							},
+							Overflow: box.OverflowScrollX,
+						},
+					},
+					// r.Children{
+					// 	r.CreateElement(
+					// 		text.Text,
+					// 		r.Properties{
+					// 			text.Properties{
+					// 				Value:      loremIpsum,
+					// 				WordBreak:  text.BreakAll,
+					// 				Foreground: tcell.ColorWhite,
+					// 			},
+					// 		},
+					// 		nil,
+					// 	),
+					// },
+					nil,
+				),
+				r.CreateElement(
+					components.ClickableBox,
+					r.Properties{
+						box.Properties{
+							Grow:       2,
+							Foreground: tcell.ColorCadetBlue,
+							Border: box.Border{
+								Style:      box.BorderStyleSingle,
+								Foreground: tcell.ColorWhite,
+							},
+							Title: box.Label{
+								Value: "Grow 2",
+							},
+						},
+					},
+					nil,
+				),
 				r.CreateElement(
 					components.ClickableBox,
 					r.Properties{
@@ -99,31 +100,13 @@ func main() {
 								Foreground: tcell.ColorWhite,
 							},
 							Title: box.Label{
-								Value: "Top",
-							},
-						},
-					},
-					nil,
-				),
-				r.CreateElement(
-					components.EffectExampleBox,
-					r.Properties{
-						box.Properties{
-							Grow:       1,
-							Foreground: tcell.ColorLightCyan,
-							Border: box.Border{
-								Style:      box.BorderStyleSingle,
-								Foreground: tcell.ColorWhite,
-							},
-							Title: box.Label{
-								Value: "Bottom",
+								Value: "Grow 1",
 							},
 						},
 					},
 					nil,
 				),
 			},
-			// nil,
 		),
 		r.RetortConfiguration{},
 	)

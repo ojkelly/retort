@@ -42,7 +42,7 @@ type (
 // TODO: direct hover and click events
 // TODO: keep track of focussed inputs, and direct keyboard input there, when
 // focussed
-func (r *retort) handleEvents() {
+func (r *retort) handleEvents(resizeChan chan struct{}) {
 	screen := UseScreen()
 	quit := UseQuit()
 
@@ -59,12 +59,8 @@ func (r *retort) handleEvents() {
 				quit()
 			}
 		case *tcell.EventResize:
-			w, h := screen.Size()
+			resizeChan <- struct{}{}
 
-			r.quadtree.Bounds.Width = w
-			r.quadtree.Bounds.Height = h
-
-			screen.Sync()
 		case *tcell.EventMouse:
 			r.handleMouseEvent(ev)
 		case *tcell.EventError:

@@ -27,6 +27,9 @@ type retort struct {
 	rootBlockLayout BlockLayout
 	quadtree        quadtree.Quadtree
 	config          RetortConfiguration
+
+	// True when a full redraw is required
+	requiresScreenSync bool
 }
 
 // RetortConfiguration allows you to enable features your app
@@ -111,6 +114,7 @@ func Retort(root Element, config RetortConfiguration) {
 	c = &config
 
 	quitChan = make(chan struct{})
+	resizeChan = make(chan struct{})
 
 	setStateChan = make(chan ActionCreator, 2000)
 
@@ -163,7 +167,7 @@ func Retort(root Element, config RetortConfiguration) {
 	var deadline time.Time
 
 	// event handling
-	go r.handleEvents()
+	go r.handleEvents(resizeChan)
 
 	// work loop
 	go func() {
@@ -197,6 +201,28 @@ func Retort(root Element, config RetortConfiguration) {
 			case action := <-setStateChan:
 				action.addToQueue()
 				r.hasNewState = true
+
+			case <-resizeChan:
+				r.updateTree()
+
+				w, h := screen.Size()
+
+				r.quadtree.Bounds.Width = w
+				r.quadtree.Bounds.Height = h
+
+				newBlockLayout := BlockLayout{
+					X:       0,
+					Y:       0,
+					Columns: w + 1, // +1 to account for zero-indexing
+					Rows:    h + 1, // +1 to account for zero-indexing
+					ZIndex:  0,
+				}
+
+				r.wipRoot.BlockLayout = newBlockLayout
+				r.wipRoot.InnerBlockLayout = newBlockLayout
+				r.wipRoot.dirty = true
+				r.hasChangesToRender = true
+				r.requiresScreenSync = true
 			case <-frameTick.C:
 				if r.hasNewState {
 					r.updateTree()
