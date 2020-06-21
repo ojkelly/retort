@@ -14,7 +14,7 @@ func Box(p r.Properties) r.Element {
 	// Get our Properties
 	boxProps := p.GetProperty(
 		Properties{},
-		"Box requires Properties",
+		"Box requires box.Properties",
 	).(Properties)
 
 	// Get any children

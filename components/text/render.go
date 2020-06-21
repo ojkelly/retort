@@ -7,7 +7,6 @@ import (
 	runewidth "github.com/mattn/go-runewidth"
 	"retort.dev/components/box"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
@@ -18,7 +17,6 @@ func render(
 	layout r.BlockLayout,
 	offsetX, offsetY int,
 ) {
-	debug.Spew(offsetX, offsetY)
 	style := tcell.StyleDefault
 	style = style.Foreground(props.Foreground)
 

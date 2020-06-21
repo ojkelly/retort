@@ -72,7 +72,7 @@ func (r *retort) commitRoot() {
 
 	// Clean up and prepare for the next render pass
 	r.currentRoot = r.wipRoot
-	r.wipRoot = nil
+
 	r.hasChangesToRender = false
 
 	hookFiber = nil

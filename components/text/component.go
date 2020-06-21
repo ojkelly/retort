@@ -6,7 +6,6 @@ import (
 	"github.com/gdamore/tcell"
 	"retort.dev/components/box"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 	"retort.dev/r/intmath"
 )
 
@@ -130,7 +129,7 @@ func Text(props r.Properties) r.Element {
 	p := r.Properties{
 		boxProps,
 	}
-	debug.Spew(boxProps)
+
 	if boxProps.Overflow != box.OverflowNone {
 		p = append(p, mouseEventHandler)
 	}

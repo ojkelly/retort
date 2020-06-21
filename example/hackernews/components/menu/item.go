@@ -80,20 +80,27 @@ func MenuItem(p r.Properties) r.Element {
 		)
 	}
 
-	if story == nil {
-		return nil
-	}
+	// if story == nil {
+	// 	return nil
+	// }
 	// return nil
+
+	title := "Loading"
+	meta := "Loading"
+
+	if story != nil {
+		title = story.Title
+		meta = fmt.Sprintf(
+			"Score: %d Comments: %d",
+			story.Score,
+			story.Descendants,
+		)
+	}
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
 			box.Properties{
 				Direction: box.DirectionColumn,
-				Grow:      1,
-				Padding: box.Padding{
-					Left:  1,
-					Right: 1,
-				},
 				Border: box.Border{
 					Foreground: tcell.ColorGray,
 					Style:      box.BorderStyleSingle,
@@ -104,9 +111,8 @@ func MenuItem(p r.Properties) r.Element {
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{Grow: 1},
 					text.Properties{
-						Value:      story.Title,
+						Value:      title,
 						Foreground: t.Foreground,
 					},
 				},
@@ -115,13 +121,8 @@ func MenuItem(p r.Properties) r.Element {
 			r.CreateElement(
 				text.Text,
 				r.Properties{
-					box.Properties{Grow: 1},
 					text.Properties{
-						Value: fmt.Sprintf(
-							"Score: %d Comments: %d",
-							story.Score,
-							story.Descendants,
-						),
+						Value:      meta,
 						Foreground: t.Subtle,
 					},
 				},

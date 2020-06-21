@@ -2,15 +2,20 @@ package r
 
 import (
 	"github.com/gdamore/tcell"
+	"retort.dev/r/debug"
 	"retort.dev/r/internal/quadtree"
 )
 
+// TODO: Rewrite to enable event propegation up the chain
+// TODO: Enable focussed elements, receiving the event first
 type (
 	// EventHandler is a Property you can add to a Component that will
 	// be called on every *tcell.Event that is created.
 	//
 	// Use this sparingly as it's very noisy.
 	EventHandler = func(e *tcell.Event)
+
+	EventHandlerKey = func(e *tcell.EventKey, meta EventMeta) EventMeta
 
 	// EventHandlerMouse is a Property you can add to a Component to
 	// be called when a *tcell.EventMouse is created.
@@ -37,6 +42,10 @@ type (
 	// EventMouseClickRelease is called when the mouse click has been released.
 	// TODO: this can probably be enhanced to enable drag and drop
 	EventMouseClickRelease = func()
+
+	EventMeta struct {
+		StopPropegation bool
+	}
 )
 
 // TODO: direct hover and click events
@@ -46,6 +55,7 @@ func (r *retort) handleEvents(resizeChan chan struct{}) {
 	screen := UseScreen()
 	quit := UseQuit()
 
+	meta := EventMeta{}
 	for {
 		// Grab events from tcell
 		ev := screen.PollEvent()
@@ -58,6 +68,7 @@ func (r *retort) handleEvents(resizeChan chan struct{}) {
 			case tcell.KeyCtrlQ:
 				quit()
 			}
+			r.handleKeyEvent(r.wipRoot, ev, meta)
 		case *tcell.EventResize:
 			resizeChan <- struct{}{}
 
@@ -68,7 +79,7 @@ func (r *retort) handleEvents(resizeChan chan struct{}) {
 		case *tcell.EventTime:
 		default:
 			if ev != nil {
-				// debug.Log("Unhandled Event", ev)
+				debug.Log("Unhandled Event", ev)
 			}
 		}
 
@@ -81,6 +92,33 @@ func (r *retort) handleEvent(e tcell.Event) {
 
 	// Get the event handler and call it
 
+}
+
+// handleKeyEvent currently processes outside in
+// it would be ideal to track the element/fiber in focus, and expand out from there
+func (r *retort) handleKeyEvent(f *fiber, ev *tcell.EventKey, meta EventMeta) {
+	// debug.Spew(f)
+	if f == nil {
+		return
+	}
+
+	var eventHandler EventHandlerKey
+
+	eventHandler = f.Properties.GetOptionalProperty(
+		eventHandler,
+	).(EventHandlerKey)
+
+	if eventHandler != nil {
+		meta = eventHandler(ev, meta)
+	}
+
+	debug.Spew("handleKeyEvent", ev.Rune(), meta, eventHandler)
+	if meta.StopPropegation {
+		return
+	}
+
+	r.handleKeyEvent(f.child, ev, meta)
+	r.handleKeyEvent(f.sibling, ev, meta)
 }
 
 // handleMouseEvent determines what type of mouse event needs to be created

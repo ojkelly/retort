@@ -28,15 +28,13 @@ func calculateBlockLayout(
 		switch stage {
 		case r.CalculateLayoutStageInitial:
 
-			// lines := breakLines(textProps, innerBlockLayout)
-			// rows := len(lines)
+			lines := breakLines(textProps, innerBlockLayout)
+			rows := len(lines)
 
-			// debug.Spew("rows", rows, textProps, innerBlockLayout)
-
-			// outerBlockLayout.Rows = rows
-			// outerBlockLayout.FixedRows = true
-			// innerBlockLayout.Rows = rows
-			// innerBlockLayout.FixedRows = true
+			outerBlockLayout.Rows = rows
+			outerBlockLayout.FixedRows = true
+			innerBlockLayout.Rows = rows
+			innerBlockLayout.FixedRows = true
 		case r.CalculateLayoutStageWithChildren:
 		case r.CalculateLayoutStageFinal:
 

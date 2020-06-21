@@ -46,7 +46,7 @@ func UseTopStories() TopStoriesState {
 
 		checked = true
 
-		topStories, err := c.GetTopStories(10)
+		topStories, err := c.GetTopStories(20)
 
 		if err != nil {
 			// debug.Spew("topStories err", err)

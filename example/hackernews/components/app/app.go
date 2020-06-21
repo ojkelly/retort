@@ -50,10 +50,7 @@ func App(p r.Properties) r.Element {
 					r.CreateElement(
 						box.Box,
 						r.Properties{
-							box.Properties{
-								Width:  100,
-								Height: 100,
-							},
+							box.Properties{},
 						},
 						r.Children{
 							// Menu
