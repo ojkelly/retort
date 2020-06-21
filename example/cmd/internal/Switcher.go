@@ -11,6 +11,8 @@ type SelectedView int
 const (
 	ViewOneSelected SelectedView = iota
 	ViewTwoSelected
+	ViewThreeSelected
+	ViewFourSelected
 )
 
 type SelectedViewState struct {
@@ -40,6 +42,18 @@ func Switcher(p r.Properties) r.Element {
 			r.Properties{},
 			nil,
 		)}
+	case ViewThreeSelected:
+		children = r.Children{r.CreateElement(
+			ViewThree,
+			r.Properties{},
+			nil,
+		)}
+	case ViewFourSelected:
+		children = r.Children{r.CreateElement(
+			ViewFour,
+			r.Properties{},
+			nil,
+		)}
 	}
 
 	keyEventHandler := func(e *tcell.EventKey, meta r.EventMeta) r.EventMeta {
@@ -58,6 +72,23 @@ func Switcher(p r.Properties) r.Element {
 				return r.State{
 					SelectedViewState{
 						Selected: ViewTwoSelected,
+					},
+				}
+			})
+
+		case 51: // 3
+			setState(func(s r.State) r.State {
+				return r.State{
+					SelectedViewState{
+						Selected: ViewThreeSelected,
+					},
+				}
+			})
+		case 52: // 4
+			setState(func(s r.State) r.State {
+				return r.State{
+					SelectedViewState{
+						Selected: ViewFourSelected,
 					},
 				}
 			})

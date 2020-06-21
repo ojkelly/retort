@@ -2,14 +2,12 @@ This to do before this is releasable.
 
 # Box
 
-- [] TODO: Add title and footer text
-- [] TODO: Add ability to set content
-- [] TODO: Add layout engine
+- [] TODO: Add layout engine (in progress)
 
 # Components
 
 - [] TODO: Add input component
-- [] TODO: Add keyboard shortcut component
+- [] TODO: Add keyboard shortcut component (in progress)
 
 # Events
 
@@ -30,8 +28,3 @@ This to do before this is releasable.
 # API
 
 - goal is to clean up the public api as much as possible
-
-# Rendering
-
-- [] TODO: keep track of Z indexs, and render each Zindex on its own layer
-  - (ie sequentially, from bottom up)

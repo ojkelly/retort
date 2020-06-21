@@ -432,6 +432,10 @@ func (r *retort) reconcileChildren(f *fiber, elements []*fiber) {
 	// Add newly generated child elements, as children to this fiber
 	for index < len(elements) || oldFiber != nil {
 		var element *fiber
+
+		if index == len(elements) {
+			break
+		}
 		if len(elements) != 0 {
 			element = elements[index]
 		}
