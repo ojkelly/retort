@@ -23,37 +23,48 @@ func Switcher(p r.Properties) r.Element {
 	s, setState := r.UseState(r.State{
 		SelectedViewState{Selected: ViewOneSelected},
 	})
+
 	state := s.GetState(
 		SelectedViewState{},
 	).(SelectedViewState)
 
-	children := r.Children{}
-
-	switch state.Selected {
-	case ViewOneSelected:
-		children = r.Children{r.CreateElement(
+	children := r.Children{
+		r.CreateElement(
 			ViewOne,
-			r.Properties{},
+			r.Properties{
+				box.Properties{
+					Hide: state.Selected != ViewOneSelected,
+				},
+			},
 			nil,
-		)}
-	case ViewTwoSelected:
-		children = r.Children{r.CreateElement(
-			ViewTwo,
-			r.Properties{},
-			nil,
-		)}
-	case ViewThreeSelected:
-		children = r.Children{r.CreateElement(
-			ViewThree,
-			r.Properties{},
-			nil,
-		)}
-	case ViewFourSelected:
-		children = r.Children{r.CreateElement(
-			ViewFour,
-			r.Properties{},
-			nil,
-		)}
+		),
+		// r.CreateElement(
+		// 	ViewTwo,
+		// 	r.Properties{
+		// 		box.Properties{
+		// 			Hide: state.Selected != ViewTwoSelected,
+		// 		},
+		// 	},
+		// 	nil,
+		// ),
+		// r.CreateElement(
+		// 	ViewThree,
+		// 	r.Properties{
+		// 		box.Properties{
+		// 			Hide: state.Selected != ViewThreeSelected,
+		// 		},
+		// 	},
+		// 	nil,
+		// ),
+		// r.CreateElement(
+		// 	ViewFour,
+		// 	r.Properties{
+		// 		box.Properties{
+		// 			Hide: state.Selected != ViewFourSelected,
+		// 		},
+		// 	},
+		// 	nil,
+		// ),
 	}
 
 	keyEventHandler := func(e *tcell.EventKey, meta r.EventMeta) r.EventMeta {

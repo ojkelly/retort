@@ -9,19 +9,24 @@ import (
 )
 
 func ViewOne(p r.Properties) r.Element {
+	boxProps := p.GetOptionalProperty(
+		box.Properties{},
+	).(box.Properties)
+
+	boxProps.Direction = box.DirectionColumn
+	boxProps.Border = box.Border{
+		Style:      box.BorderStyleSingle,
+		Foreground: tcell.ColorWhite,
+	}
+
+	boxProps.Title = box.Label{
+		Value: "View One",
+	}
+
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
-			box.Properties{
-				Direction: box.DirectionColumn,
-				Border: box.Border{
-					Style:      box.BorderStyleSingle,
-					Foreground: tcell.ColorWhite,
-				},
-				Title: box.Label{
-					Value: "View One",
-				},
-			},
+			boxProps,
 		},
 		r.Children{
 			r.CreateElement(

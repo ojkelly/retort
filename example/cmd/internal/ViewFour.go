@@ -30,19 +30,24 @@ func ViewFour(p r.Properties) r.Element {
 		menuItems = append(menuItems, item)
 	}
 
+	boxProps := p.GetOptionalProperty(
+		box.Properties{},
+	).(box.Properties)
+
+	boxProps.Direction = box.DirectionColumn
+	boxProps.Border = box.Border{
+		Style:      box.BorderStyleSingle,
+		Foreground: tcell.ColorWhite,
+	}
+
+	boxProps.Title = box.Label{
+		Value: "View Three [500 Items]",
+	}
+
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
-			box.Properties{
-				Direction: box.DirectionRow,
-				Border: box.Border{
-					Style:      box.BorderStyleSingle,
-					Foreground: tcell.ColorWhite,
-				},
-				Title: box.Label{
-					Value: "View Four [500 Items]",
-				},
-			},
+			boxProps,
 		},
 		r.Children{
 			r.CreateElement(
@@ -74,7 +79,7 @@ func ViewFour(p r.Properties) r.Element {
 							Foreground: tcell.ColorWhite,
 						},
 						Title: box.Label{
-							Value: "Details",
+							Value: "Details Four",
 						},
 					},
 				},

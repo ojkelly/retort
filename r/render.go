@@ -4,6 +4,7 @@ import (
 	"sort"
 
 	"github.com/gdamore/tcell"
+	"retort.dev/r/debug"
 )
 
 // RenderToScreen is the callback passed to create a Screen Element
@@ -85,8 +86,10 @@ func (r *retort) processDisplayCommands(f *fiber) (displayList DisplayList) {
 		return
 	}
 
-	// debug.Log(fmt.Sprintf("processDisplayCommands address: %p", f))
-	// debug.Spew(f)
+	if f.BlockLayout.Hide {
+		debug.Log("f.BlockLayout.Hide render")
+		return
+	}
 
 	// TODO: collect all the renderToScreen paired with their zIndex
 	// render all from lowest to highest index

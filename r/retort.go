@@ -369,7 +369,7 @@ func (r *retort) updateElementComponent(f *fiber) {
 	r.wipFiber.hooks = nil
 
 	children := f.component(f.Properties)
-	// d.Log("updateElementComponent children", children)
+
 	r.reconcileChildren(f, []*fiber{children})
 }
 

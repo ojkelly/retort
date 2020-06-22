@@ -3,7 +3,6 @@ package internal
 import (
 	"github.com/tjarratt/babble"
 	"retort.dev/r"
-	"retort.dev/r/debug"
 )
 
 type Item struct {
@@ -18,7 +17,6 @@ type ItemsState struct {
 }
 
 func UseItems(itemCount int) (itemsState ItemsState, setItemState func(selected int)) {
-	debug.Spew("UseItems", itemCount)
 	babbler := babble.NewBabbler()
 
 	initialItems := []Item{}

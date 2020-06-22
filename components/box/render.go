@@ -14,6 +14,10 @@ func render(
 	props Properties,
 	layout r.BlockLayout,
 ) {
+	if props.Hide {
+		return
+	}
+
 	// debug.Spew("render", layout)
 	x1 := layout.X
 	y1 := layout.Y

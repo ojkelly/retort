@@ -112,7 +112,6 @@ func (r *retort) handleKeyEvent(f *fiber, ev *tcell.EventKey, meta EventMeta) {
 		meta = eventHandler(ev, meta)
 	}
 
-	debug.Spew("handleKeyEvent", ev.Rune(), meta, eventHandler)
 	if meta.StopPropegation {
 		return
 	}

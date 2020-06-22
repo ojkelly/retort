@@ -2,6 +2,7 @@ package r
 
 import (
 	"github.com/gdamore/tcell"
+	"retort.dev/r/debug"
 	"retort.dev/r/internal/quadtree"
 )
 
@@ -50,6 +51,9 @@ type BlockLayout struct {
 	// Valid is set when the BlockLayout has been initialised somewhere
 	// if it's false, it means we've got a default
 	Valid bool
+
+	// Hide is set when this BlockLayout should not be rendered
+	Hide bool
 }
 
 type BlockLayouts = []BlockLayout
@@ -133,10 +137,14 @@ func (r *retort) calculateLayout(f *fiber) {
 		return
 	}
 
+	if f.BlockLayout.Hide {
+		debug.Log("f.BlockLayout.Hide")
+		return
+	}
+
 	screen := UseScreen()
 
 	if f.calculateLayout != nil {
-		// debug.Spew("f.BlockLayout", f.BlockLayout, f.InnerBlockLayout)
 		calcLayout := *f.calculateLayout
 
 		blockLayout, innerBlockLayout, _ := calcLayout(
@@ -145,6 +153,11 @@ func (r *retort) calculateLayout(f *fiber) {
 			f.InnerBlockLayout,
 			nil,
 		)
+
+		if blockLayout.Hide {
+			debug.Log("blockLayout.Hide")
+			return
+		}
 
 		f.BlockLayout = blockLayout
 
@@ -159,13 +172,8 @@ func (r *retort) calculateLayout(f *fiber) {
 			childrenBlockLayoutsWithProperties := []BlockLayoutWithProperties{}
 
 			for _, c := range children {
-				// debug.Log(fmt.Sprintf("c address %p", c))
-				cbl := BlockLayoutWithProperties{
-					BlockLayout: BlockLayout{},
-					Properties:  Properties{},
-				}
 				if c != nil {
-					cbl = BlockLayoutWithProperties{
+					cbl := BlockLayoutWithProperties{
 						BlockLayout: c.BlockLayout,
 						Properties:  c.Properties,
 					}
@@ -173,12 +181,16 @@ func (r *retort) calculateLayout(f *fiber) {
 				}
 			}
 
-			_, _, childrenBlockLayouts := calcLayout(
+			bl, _, childrenBlockLayouts := calcLayout(
 				screen,
 				CalculateLayoutStageWithChildren,
 				f.InnerBlockLayout,
 				childrenBlockLayoutsWithProperties,
 			)
+			if bl.Hide {
+				debug.Log("bl.Hide")
+				return
+			}
 
 			// Put the updated blockLayouts back onto the children
 			for i, c := range children {

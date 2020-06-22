@@ -9,19 +9,24 @@ import (
 )
 
 func ViewTwo(p r.Properties) r.Element {
+	boxProps := p.GetOptionalProperty(
+		box.Properties{},
+	).(box.Properties)
+
+	boxProps.Direction = box.DirectionColumn
+	boxProps.Border = box.Border{
+		Style:      box.BorderStyleSingle,
+		Foreground: tcell.ColorWhite,
+	}
+
+	boxProps.Title = box.Label{
+		Value: "View Two",
+	}
+
 	return r.CreateElement(
 		box.Box,
 		r.Properties{
-			box.Properties{
-				Direction: box.DirectionRow,
-				Border: box.Border{
-					Style:      box.BorderStyleSingle,
-					Foreground: tcell.ColorWhite,
-				},
-				Title: box.Label{
-					Value: "View Two",
-				},
-			},
+			boxProps,
 		},
 		r.Children{
 			r.CreateElement(

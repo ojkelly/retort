@@ -58,6 +58,9 @@ type Properties struct {
 
 	// Footer is a Label place on the bottom border
 	Footer Label
+
+	// Hide to prevent this Box from rendering or affecting layout
+	Hide bool
 }
 
 // [ BoxModel Types ]-----------------------------------------------------------

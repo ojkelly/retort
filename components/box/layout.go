@@ -22,6 +22,13 @@ func calculateBlockLayout(
 	) {
 		childrenBlockLayouts = children
 
+		if props.Hide {
+			outerBlockLayout.Hide = true
+			innerBlockLayout.Hide = true
+
+			return
+		}
+
 		switch stage {
 		case r.CalculateLayoutStageInitial:
 			// if any widths or heights are explicitly set, set them here
