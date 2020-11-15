@@ -7,6 +7,11 @@ A reactive terminal user interface library for golang, built ontop of tcell.
 
 Full documentation is available at https://godoc.org/retort.dev
 
+## Current Status
+
+Retort is stil in development. It's layout engine is the last major piece to finish.
+
+
 ## Developing
 
 To run the example app:
